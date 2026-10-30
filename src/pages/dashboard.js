@@ -6,7 +6,6 @@ const CARDS = [
   { key: 'activeUsers', label: 'Active Users', icon: 'bi-person-check', note: 'Not suspended' },
   { key: 'registeredDevices', label: 'Registered Devices', icon: 'bi-laptop', note: 'Not revoked' },
   { key: 'proxyServers', label: 'Proxy Servers', icon: 'bi-hdd-network', note: (s) => `${s.enabledProxyServers.toLocaleString()} enabled` },
-  { key: 'proxyAssignments', label: 'Proxy Assignments', icon: 'bi-diagram-3' },
   { key: 'activeSessions', label: 'Active Sessions', icon: 'bi-shield-check', note: 'Unexpired; not users online' },
 ];
 
@@ -96,7 +95,7 @@ export function renderDashboardContent({ user, api, onAuthLost }) {
             </div>
           </div>
 
-          <p class="small text-body-secondary mt-4 mb-0"><i class="bi bi-info-circle me-1"></i>Manage users, proxy servers and proxy assignments from the sidebar.</p>
+          <p class="small text-body-secondary mt-4 mb-0"><i class="bi bi-info-circle me-1"></i>Manage users and proxy servers from the sidebar.</p>
         </div>`);
 
   text(page, '[data-first]', (user.name || user.email).split(' ')[0]);

@@ -35,7 +35,7 @@ export function renderUsers({ api, onAuthLost, route: initialRoute }) {
           <table class="table table-hover align-middle mb-0 small">
             <thead class="table-light">
               <tr><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Role</th><th scope="col">Status</th>
-                <th scope="col" class="text-end">Devices</th><th scope="col">Proxy Server</th><th scope="col">Registered</th><th scope="col" class="text-end">Actions</th></tr>
+                <th scope="col" class="text-end">Devices</th><th scope="col">Registered</th><th scope="col" class="text-end">Actions</th></tr>
             </thead>
             <tbody data-rows></tbody>
           </table>
@@ -57,7 +57,7 @@ export function renderUsers({ api, onAuthLost, route: initialRoute }) {
   searchInput.value = route.search;
   let latest = 0;
 
-  const message = (markup) => rows.replaceChildren(html(`<tr><td colspan="8" class="text-center text-body-secondary py-4">${markup}</td></tr>`));
+  const message = (markup) => rows.replaceChildren(html(`<tr><td colspan="7" class="text-center text-body-secondary py-4">${markup}</td></tr>`));
 
   async function load() {
     const request = ++latest;
@@ -92,7 +92,7 @@ export function renderUsers({ api, onAuthLost, route: initialRoute }) {
       const row = html(`<tr>
         <td data-c="name"></td><td data-c="email" class="text-break"></td>
         <td><span data-c="role"></span></td><td><span data-c="status"></span></td>
-        <td data-c="devices" class="text-end"></td><td data-c="server"></td><td data-c="date" class="text-nowrap"></td>
+        <td data-c="devices" class="text-end"></td><td data-c="date" class="text-nowrap"></td>
         <td class="text-end"><a class="btn btn-sm btn-outline-primary" data-c="view">View Details</a></td></tr>`);
       text(row, '[data-c="name"]', u.name || '—');
       text(row, '[data-c="email"]', u.email);
@@ -103,7 +103,6 @@ export function renderUsers({ api, onAuthLost, route: initialRoute }) {
       status.textContent = u.status === 'SUSPENDED' ? 'Suspended' : 'Active';
       status.className = u.status === 'SUSPENDED' ? 'badge text-bg-danger' : 'badge text-bg-success';
       text(row, '[data-c="devices"]', String(u.devices));
-      text(row, '[data-c="server"]', u.proxyServer?.name ?? '—');
       text(row, '[data-c="date"]', formatDate(u.createdAt));
       row.querySelector('[data-c="view"]').href = userHash(u.id);
       return row;

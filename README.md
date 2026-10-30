@@ -7,7 +7,7 @@ same accounts as the desktop app.
 **Status (0.1.0):**
 - **Done:** sign-in, session restore and sign-out; the administrator layout, dashboard (with live
   statistics), user management and **proxy server management**; and a simple page for regular users.
-- **Not yet:** assignment management.
+- **Not yet:** server selection for users (they will choose an enabled server when connecting).
 
 ## Requirements
 
@@ -60,7 +60,7 @@ No production address is built in, and no secrets belong in frontend environment
 | Account | Page |
 |---|---|
 | Not signed in | Sign-in (email, password with show/hide) |
-| `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers, Proxy Assignments), top bar, and the pages below |
+| `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers), top bar, and the pages below |
 | `USER` | Account page (name, email, "coming soon" note, sign out). No admin navigation. |
 | Suspended | Access denied |
 | Server unreachable | Connection error with Retry |
@@ -72,20 +72,17 @@ Navigation uses the URL hash, so Back, Forward and refresh behave predictably:
 - `#users?search=…&page=…`
 - `#users/<id>`
 - `#servers`
-- `#assignments?filter=…&search=…&page=…`
 
 All data comes from ProxyMarket Server's API; the browser never touches the database.
 
 ### Users
 
-- **List:** name, email, role, status, active devices, proxy server, registration date and **View
+- **List:** name, email, role, status, active devices, registration date and **View
   Details**. Newest first, 20 per page, with Previous and Next.
 - **Search:** by name or email. The server does the search, with a 300 ms delay after typing.
 - **Details page:**
   - account information;
   - devices, with revoked ones marked;
-  - assigned proxy, with **Assign Proxy**, or **Change Proxy** and **Remove Assignment** (the same
-    dialog and actions as the Proxy Assignments page);
   - active sessions (an ID prefix, created and expiry times, and browser and IP; no tokens).
 - **Actions:** **Suspend** / **Reactivate** and **Make Administrator** / **Remove Administrator
   Role**. Each needs confirmation, and the user is reloaded from the server afterwards; nothing changes
@@ -95,53 +92,26 @@ All data comes from ProxyMarket Server's API; the browser never touches the data
 
 ### Proxy Servers
 
-- **List:** name, host, port, status (green Enabled / grey Disabled), assigned users, created date,
+- **List:** name, host, port, status (green Enabled / grey Disabled), created date,
   and Edit / Enable or Disable / Delete. "No proxy servers configured." when empty.
 - **Add / Edit:** one form for name, host, port and enabled. It checks required fields and the port
   range (1–65535); the server validates the host and has the final say. If the server refuses, the
   form stays open with your values and shows its message. Save can't be sent twice.
-- **Disable:** asks for confirmation first, because assigned users then get no proxy configuration.
+- **Disable:** asks for confirmation first, because users can't select a disabled server.
   Enabling needs no confirmation.
-- **Delete:** asks for confirmation, naming the server. A server with assigned users can't be
-  deleted: the server refuses it (`SERVER_IN_USE`) and the page explains why. Remove its
-  assignments first.
+- **Delete:** asks for confirmation, naming the server. Any server can be deleted.
 - **Records only:** this manages ProxyMarket's records. It never stops, reconfigures or deletes an
   actual proxy, Squid or any other infrastructure.
-
-### Proxy Assignments
-
-Each user has **at most one** proxy server; a server can serve many users. The server enforces this
-with a unique constraint, so the page never has to.
-- **List:** user (linking to their details), email, proxy server, host, port, server status (green
-  Enabled / grey Disabled), assigned date, and **Change** / **Remove**. Assignments to a disabled
-  server stay listed and unchanged. Newest first, 20 per page.
-- **Search:** by user name, email or proxy server name, done by the server (300 ms after typing).
-- **Filter:** **Assigned Users** (the default), **Unassigned Users** or **All Users**. The server works
-  out who is unassigned with a join, so no placeholder records exist. Users without a proxy get an
-  **Assign** button.
-- **Assign Proxy:** pick a user (a server-side search showing at most 8 matches, never the whole
-  user list) and a server. Enabled servers are listed first; disabled ones are shown but can't be
-  chosen; nothing is pre-selected. A user who already has a server is refused by the server, and the
-  message points to **Change**.
-- **Change:** shows the user and current server; pick another. This updates the same assignment
-  (`PATCH`), never a second one.
-- **Remove:** asks for confirmation. Only the assignment is removed: the account, its devices and
-  sessions, and the proxy server stay.
-- **After every change:** the form closes only once the server confirms, then the list reloads. On
-  failure the form stays open with the server's message.
-- **Clients:** nothing is pushed. A client sees a change the next time it requests
-  `GET /api/v1/proxy/config` (the desktop app doesn't call it yet).
 
 ## Admin dashboard statistics
 
 The dashboard loads `GET /api/v1/admin/dashboard` when it opens, and again when you press **Refresh**.
 There's no polling, and a refresh while a load is running doesn't send a second request.
 
-- **Six cards:**
+- **Five cards:**
   - Total Users and Active Users (not suspended);
   - Registered Devices (not revoked);
   - Proxy Servers, with the enabled count shown underneath;
-  - Proxy Assignments;
   - Active Sessions. These are unexpired sessions, which is **not** the same as users online.
 - **Recently Registered Users:** the 10 newest users, with role and status badges and the date in
   your local time zone.
@@ -164,9 +134,5 @@ They use the Node.js test runner with a fake `fetch`, so no browser or server is
   (`tests/auth.test.js`);
 - the dashboard statistics loader (`tests/stats.test.js`);
 - the user administration API calls, account actions and routes (`tests/admin-users.test.js`);
-- proxy server API calls, form checks and actions (`tests/proxy-servers.test.js`);
-- proxy assignment API calls, routes, the server picker, and assign / change / remove
-  (`tests/proxy-assignments.test.js`).
-
-Server-side rules (one per user, search, filters, concurrency) are tested in ProxyMarket Server:
-`npm test && npm run test:integration` there.
+- proxy server API calls, form checks and actions, and that the removed assignment API and route
+  are gone (`tests/proxy-servers.test.js`).

@@ -27,7 +27,7 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
           <table class="table table-hover align-middle mb-0 small">
             <thead class="table-light"><tr>
               <th scope="col">Name</th><th scope="col">Host</th><th scope="col">Port</th><th scope="col">Status</th>
-              <th scope="col" class="text-end">Assigned Users</th><th scope="col">Created</th><th scope="col" class="text-end">Actions</th>
+              <th scope="col">Created</th><th scope="col" class="text-end">Actions</th>
             </tr></thead>
             <tbody data-rows></tbody>
           </table>
@@ -40,7 +40,7 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
   const errorBox = page.querySelector('[data-error]');
   let latest = 0;
 
-  const placeholder = (markup) => rows.replaceChildren(html(`<tr><td colspan="7" class="text-center text-body-secondary py-4">${markup}</td></tr>`));
+  const placeholder = (markup) => rows.replaceChildren(html(`<tr><td colspan="6" class="text-center text-body-secondary py-4">${markup}</td></tr>`));
 
   async function load() {
     const request = ++latest;
@@ -73,7 +73,7 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
   function row(server) {
     const tr = html(`<tr>
       <td data-c="name" class="fw-medium"></td><td data-c="host" class="font-monospace text-break"></td><td data-c="port" class="font-monospace"></td>
-      <td><span data-c="status"></span></td><td data-c="assigned" class="text-end"></td><td data-c="created" class="text-nowrap"></td>
+      <td><span data-c="status"></span></td><td data-c="created" class="text-nowrap"></td>
       <td class="text-end text-nowrap">
         <button class="btn btn-sm btn-outline-secondary" data-edit><i class="bi bi-pencil me-1" aria-hidden="true"></i>Edit</button>
         <button class="btn btn-sm" data-toggle></button>
@@ -85,7 +85,6 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
     const status = tr.querySelector('[data-c="status"]');
     status.textContent = server.enabled ? 'Enabled' : 'Disabled';
     status.className = server.enabled ? 'badge text-bg-success' : 'badge text-bg-secondary';
-    text(tr, '[data-c="assigned"]', String(server.assignedUsers));
     text(tr, '[data-c="created"]', formatDate(server.createdAt));
 
     const toggle = tr.querySelector('[data-toggle]');

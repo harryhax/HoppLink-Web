@@ -4,7 +4,7 @@ import { describe, test } from 'node:test';
 import { createApi } from '../src/api.js';
 import { createStatsLoader } from '../src/stats.js';
 
-const SUMMARY = { totalUsers: 5, activeUsers: 4, registeredDevices: 3, proxyServers: 2, enabledProxyServers: 1, proxyAssignments: 2, activeSessions: 6 };
+const SUMMARY = { totalUsers: 5, activeUsers: 4, registeredDevices: 3, proxyServers: 2, enabledProxyServers: 1, activeSessions: 6 };
 const USERS = [{ id: 'u1', name: 'Jane', email: 'jane@example.test', role: 'USER', status: 'ACTIVE', createdAt: '2026-10-29T14:30:00.000Z' }];
 const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 

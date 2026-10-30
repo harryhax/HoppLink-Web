@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Removed
+- **Proxy assignment administration.** Users will select an enabled proxy server themselves, so
+  permanent assignments are gone (the Added entries below that mention them are historical):
+  - the Proxy Assignments page, route (`#assignments`), sidebar item and Assign / Change Proxy dialog;
+  - the user details "Assigned proxy" card and its Assign, Change and Remove actions;
+  - the users list's Proxy Server column, the proxy server list's Assigned Users column, and the
+    dashboard's Proxy Assignments card;
+  - the assignment API client methods and error messages, including `SERVER_IN_USE`: any proxy
+    server can now be deleted.
+
 ### Added
 - **Proxy assignment management:**
   - the Proxy Assignments page: server-side search by user, email or proxy server; Assigned,

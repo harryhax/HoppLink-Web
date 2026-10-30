@@ -51,7 +51,7 @@ export function createProxyAdmin(api, confirm) {
       if (server.enabled) {
         const confirmed = await confirm({
           title: 'Disable proxy server?',
-          body: `Disable "${server.name}"? Users assigned to it may no longer receive a usable proxy configuration. This only changes ProxyMarket's record; it does not stop the proxy itself.`,
+          body: `Disable "${server.name}"? Users won't be able to select it until it is enabled again. This only changes ProxyMarket's record; it does not stop the proxy itself.`,
           confirm: 'Disable server',
           danger: true,
         });

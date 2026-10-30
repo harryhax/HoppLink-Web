@@ -7,7 +7,7 @@ import { createProxyAdmin, validateServerForm } from '../src/proxy-admin.js';
 import { parseRoute } from '../src/router.js';
 
 const json = (status, body) => new Response(body === undefined ? '' : JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
-const SERVER = { id: 'srv/1', name: 'Primary Proxy', host: 'proxy.example.com', port: 3128, enabled: true, assignedUsers: 2 };
+const SERVER = { id: 'srv/1', name: 'Primary Proxy', host: 'proxy.example.com', port: 3128, enabled: true };
 const FORM = { name: '  Primary Proxy ', host: ' proxy.example.com ', port: '3128', enabled: true };
 
 function setup(respond = () => json(200, { server: SERVER })) {
@@ -115,7 +115,7 @@ describe('enable and disable', () => {
     answer(false);
     assert.deepEqual(await admin.toggle(SERVER), { outcome: 'cancelled' });
     assert.equal(calls.length, 0);
-    assert.match(questions[0].body, /may no longer receive a usable proxy configuration/);
+    assert.match(questions[0].body, /won't be able to select it/);
   });
 
   test('confirmed disabling sends enabled: false', async () => {
@@ -148,11 +148,9 @@ describe('delete', () => {
     assert.equal(calls[0].method, 'DELETE');
   });
 
-  test('deletion of an assigned server is refused with an explanation', async () => {
-    const { admin } = setup(() => json(409, { error: { code: 'SERVER_IN_USE', message: 'Cannot delete a proxy server with active assignments' } }));
-    const result = await admin.remove(SERVER);
-    assert.equal(result.outcome, 'failed');
-    assert.match(result.message, /assigned users/);
+  test('a failed deletion is reported, not claimed as success', async () => {
+    const { admin } = setup(() => json(404, { error: { code: 'PROXY_SERVER_NOT_FOUND', message: 'Proxy server not found' } }));
+    assert.deepEqual(await admin.remove(SERVER), { outcome: 'failed', message: 'This proxy server no longer exists.' });
   });
 });
 
@@ -170,5 +168,20 @@ describe('authentication errors', () => {
     const result = await admin.toggle({ ...SERVER, enabled: false });
     assert.equal(result.outcome, 'failed');
     assert.match(result.message, /TRUSTED_ORIGINS/);
+  });
+});
+
+describe('removed proxy assignment administration', () => {
+  test('the API client has no assignment methods', () => {
+    const { api } = setup();
+    for (const method of ['listAssignments', 'createAssignment', 'updateAssignment', 'deleteAssignment']) {
+      assert.equal(api[method], undefined, method);
+    }
+    assert.equal(Object.keys(api).some((key) => /assign/i.test(key)), false);
+  });
+
+  test('#assignments is not a route (it falls back to the dashboard)', () => {
+    assert.deepEqual(parseRoute('#assignments'), { name: 'dashboard' });
+    assert.deepEqual(parseRoute('#assignments?filter=unassigned'), { name: 'dashboard' });
   });
 });

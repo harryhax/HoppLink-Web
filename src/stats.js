@@ -1,6 +1,6 @@
 import { describeError } from './api.js';
 
-const SUMMARY_FIELDS = ['totalUsers', 'activeUsers', 'registeredDevices', 'proxyServers', 'enabledProxyServers', 'proxyAssignments', 'activeSessions'];
+const SUMMARY_FIELDS = ['totalUsers', 'activeUsers', 'registeredDevices', 'proxyServers', 'enabledProxyServers', 'activeSessions'];
 
 /**
  * Loads GET /api/v1/admin/dashboard. A request already in flight is reused (no duplicates).

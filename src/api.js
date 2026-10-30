@@ -66,15 +66,6 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
     createProxyServer: (server) => request('/api/v1/admin/proxy-servers', { method: 'POST', body: server }),
     updateProxyServer: (id, changes) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(id)}`, { method: 'PATCH', body: changes }),
     deleteProxyServer: (id) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-    /** `filter`: 'assigned' (assignments), 'unassigned' (users without one) or 'all'. */
-    listAssignments: ({ filter = 'assigned', search = '', page = 1, pageSize = 20 } = {}) => {
-      const params = new URLSearchParams({ filter, page: String(page), pageSize: String(pageSize) });
-      if (search.trim()) params.set('search', search.trim());
-      return request(`/api/v1/admin/proxy-assignments?${params}`);
-    },
-    createAssignment: (userId, proxyServerId) => request('/api/v1/admin/proxy-assignments', { method: 'POST', body: { userId, proxyServerId } }),
-    updateAssignment: (id, proxyServerId) => request(`/api/v1/admin/proxy-assignments/${encodeURIComponent(id)}`, { method: 'PATCH', body: { proxyServerId } }),
-    deleteAssignment: (id) => request(`/api/v1/admin/proxy-assignments/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   };
 }
 
@@ -95,12 +86,7 @@ export function describeError(result) {
     case 'CANNOT_DEMOTE_YOURSELF': return 'You cannot remove your own administrator role.';
     case 'LAST_ADMINISTRATOR': return 'At least one active administrator must remain.';
     case 'USER_NOT_FOUND': return 'This user no longer exists.';
-    case 'SERVER_IN_USE': return 'This proxy server has assigned users. Remove its assignments before deleting it.';
     case 'PROXY_SERVER_NOT_FOUND': return 'This proxy server no longer exists.';
-    case 'ASSIGNMENT_EXISTS': return 'This user already has a proxy assignment. Use Change to move them to another server.';
-    case 'ASSIGNMENT_NOT_FOUND': return 'This assignment no longer exists. It may have been removed by another administrator.';
-    case 'SERVER_DISABLED': return 'This proxy server is disabled. Choose an enabled server, or enable it first.';
-    case 'USER_SUSPENDED': return 'Suspended accounts cannot receive a new proxy assignment.';
     case 'MISSING_OR_NULL_ORIGIN':
     case 'INVALID_ORIGIN': return 'The server does not trust this website\'s address (check BETTER_AUTH_TRUSTED_ORIGINS on the server).';
     default:
