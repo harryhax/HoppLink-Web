@@ -1,6 +1,8 @@
 import { describeError } from '../api.js';
+import { assignmentActions, createAssignmentAdmin } from '../assignment-admin.js';
 import { confirmDialog, html, showAlert, text } from '../dom.js';
 import { createUserAdmin, isAuthLoss } from '../user-admin.js';
+import { handleAssignmentResult, openAssignmentForm } from './assignment-form.js';
 
 const formatDate = (value) => (value ? new Date(value).toLocaleString() : '—');
 
@@ -10,11 +12,13 @@ const badge = (element, label, tone) => {
 };
 
 /**
- * One user's details, plus suspend/reactivate and role changes. After any change the user is
- * reloaded from the server; nothing is updated optimistically.
+ * One user's details, plus suspend/reactivate, role changes and the proxy assignment (the same
+ * actions and dialog as the Proxy Assignments page). After any change the user is reloaded from the
+ * server; nothing is updated optimistically.
  */
 export function renderUserDetails({ user: me, api, onAuthLost, id, confirm = confirmDialog }) {
   const actions = createUserAdmin(api, confirm);
+  const assignmentAdmin = createAssignmentAdmin(api, confirm);
   const page = html(`
     <div>
       <nav aria-label="breadcrumb" class="mb-2"><ol class="breadcrumb small mb-0">
@@ -101,7 +105,8 @@ export function renderUserDetails({ user: me, api, onAuthLost, id, confirm = con
           <div class="col-12 col-xl-5">
             <div class="card shadow-sm h-100">
               <div class="card-header bg-white fw-semibold"><i class="bi bi-hdd-network me-2 text-primary"></i>Assigned proxy</div>
-              <div class="card-body small" data-assignment></div>
+              <div class="card-body small"><div data-assignment></div><div class="d-flex flex-wrap gap-2 mt-3" data-assignment-actions></div></div>
+              <div class="card-footer bg-white small text-body-secondary">Changes apply the next time the user's client requests its proxy configuration.</div>
             </div>
           </div>
           <div class="col-12 col-xl-7">
@@ -167,6 +172,26 @@ export function renderUserDetails({ user: me, api, onAuthLost, id, confirm = con
       text(details, '[data-a="port"]', String(assignment.server.port));
       badge(details.querySelector('[data-a="enabled"]'), assignment.server.enabled ? 'Enabled' : 'Disabled', assignment.server.enabled ? 'text-bg-success' : 'text-bg-secondary');
       assignmentBox.replaceChildren(details);
+    }
+    const target = { user, assignment };
+    const finish = (result) => handleAssignmentResult(result, { root: page, onAuthLost, reload: load });
+    const assignmentButtons = view.querySelector('[data-assignment-actions]');
+    for (const action of assignmentActions(target)) {
+      const button = html({
+        assign: '<button class="btn btn-sm btn-outline-primary"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Assign Proxy</button>',
+        change: '<button class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i>Change Proxy</button>',
+        remove: '<button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg me-1" aria-hidden="true"></i>Remove Assignment</button>',
+      }[action]);
+      button.addEventListener('click', async () => {
+        if (action !== 'remove') return openAssignmentForm({ api, actions: assignmentAdmin, target, onFinished: finish });
+        button.disabled = true;
+        showAlert(page, '');
+        const result = await assignmentAdmin.remove(target);
+        if (!page.isConnected) return;
+        button.disabled = false;
+        await finish(result);
+      });
+      assignmentButtons.append(button);
     }
 
     const sessionRows = view.querySelector('[data-sessions]');

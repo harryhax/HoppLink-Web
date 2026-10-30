@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 ### Added
+- **Proxy assignment management:**
+  - the Proxy Assignments page: server-side search by user, email or proxy server; Assigned,
+    Unassigned and All Users filters; pagination of 20; server status badges;
+  - an Assign / Change Proxy dialog with a server-side user search and a server picker (enabled
+    servers first, nothing pre-selected), shared with the user details page;
+  - confirmed removal of an assignment only;
+  - Assign, Change and Remove on the user details page, which reloads from the server afterwards.
 - **Proxy server management:**
   - a list with assigned-user counts;
   - an add/edit form, with server-side validation messages kept in the open form;
