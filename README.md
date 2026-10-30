@@ -5,9 +5,9 @@ vanilla ES modules, and Vite. It talks to [ProxyMarket Server](../ProxyMarket-Se
 same accounts as the desktop app.
 
 **Status (0.1.0):**
-- **Done:** sign-in, session restore and sign-out; the administrator layout and welcome dashboard;
-  and a simple page for regular users.
-- **Not yet:** user, proxy-server and assignment management, and dashboard statistics.
+- **Done:** sign-in, session restore and sign-out; the administrator layout and dashboard (with live
+  statistics); and a simple page for regular users.
+- **Not yet:** user, proxy-server and assignment management.
 
 ## Requirements
 
@@ -60,10 +60,31 @@ No production address is built in, and no secrets belong in frontend environment
 | Account | Page |
 |---|---|
 | Not signed in | Sign-in (email, password with show/hide) |
-| `ADMIN` | Admin layout: sidebar (Dashboard; Users, Proxy Servers and Assignments marked "Soon"), top bar, welcome card, account details and server status |
+| `ADMIN` | Admin layout: sidebar (Dashboard; Users, Proxy Servers and Assignments marked "Soon"), top bar, statistics, recently registered users, account details and server status |
 | `USER` | Account page (name, email, "coming soon" note, sign out). No admin navigation. |
 | Suspended | Access denied |
 | Server unreachable | Connection error with Retry |
+
+## Admin dashboard statistics
+
+The dashboard loads `GET /api/v1/admin/dashboard` when it opens, and again when you press **Refresh**.
+There's no polling, and a refresh while a load is running doesn't send a second request.
+
+- **Six cards:**
+  - Total Users and Active Users (not suspended);
+  - Registered Devices (not revoked);
+  - Proxy Servers, with the enabled count shown underneath;
+  - Proxy Assignments;
+  - Active Sessions. These are unexpired sessions, which is **not** the same as users online.
+- **Recently Registered Users:** the 10 newest users, with role and status badges and the date in
+  your local time zone.
+- **Loading:** shows placeholders, never numbers.
+- **Errors:** an error message with **Retry**. The figures are hidden rather than shown as zeroes.
+- **401 / 403:** the page re-checks the session and shows the right screen (sign-in, account page or
+  suspended).
+
+The definitions of each figure are in ProxyMarket Server's README. Nothing is cached or stored in
+the browser.
 
 ## Tests
 
@@ -71,5 +92,7 @@ No production address is built in, and no secrets belong in frontend environment
 npm test
 ```
 
-They use the Node.js test runner with a fake `fetch`, so no browser or server is needed. They cover
-sign-in, error handling, session restore, sign-out, and routing by role and status.
+They use the Node.js test runner with a fake `fetch`, so no browser or server is needed. They cover:
+- sign-in, error handling, session restore, sign-out, and routing by role and status
+  (`tests/auth.test.js`);
+- the dashboard statistics loader (`tests/stats.test.js`).

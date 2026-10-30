@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Admin dashboard statistics:**
+  - six summary cards and a Recently Registered Users table, from `GET /api/v1/admin/dashboard`;
+  - loading placeholders, an empty state, and an error state with Retry (no invented values);
+  - Refresh, without polling or duplicate requests;
+  - on 401/403, the existing session handling decides what to show.
+
 ## [0.1.0] - Initial web frontend
 
 ### Added

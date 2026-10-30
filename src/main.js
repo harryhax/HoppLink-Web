@@ -31,7 +31,7 @@ async function signOut() {
 function render(state) {
   switch (state.view) {
     case 'admin':
-      show(renderDashboard({ user: state.user, api, onSignOut: signOut }));
+      show(renderDashboard({ user: state.user, api, onSignOut: signOut, onAuthLost: recheckSession }));
       break;
     case 'user':
       show(renderAccount({ user: state.user, onSignOut: signOut }));
@@ -54,6 +54,18 @@ function render(state) {
         },
       }));
   }
+}
+
+/**
+ * The dashboard API refused the session (401/403). Re-check it with the existing session handling
+ * and show the right screen. Returns false (stay on the dashboard) if the server still reports an
+ * active admin, so a disagreement between endpoints can't cause a render loop.
+ */
+async function recheckSession() {
+  const next = await auth.restore();
+  if (next.view === 'admin') return false;
+  render(next);
+  return true;
 }
 
 async function start() {

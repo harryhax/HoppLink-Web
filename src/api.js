@@ -51,6 +51,7 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
     signIn: (email, password) => request('/api/v1/auth/sign-in/email', { method: 'POST', body: { email, password } }),
     signOut: () => request('/api/v1/auth/sign-out', { method: 'POST', body: {} }),
     accountMe: () => request('/api/v1/account/me'),
+    adminDashboard: () => request('/api/v1/admin/dashboard'),
   };
 }
 
