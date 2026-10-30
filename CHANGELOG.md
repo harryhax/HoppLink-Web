@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 ### Added
+- **User management:**
+  - the Users page: server-side search by name or email, pagination of 20, and View Details;
+  - user details: account, devices, assigned proxy and active sessions;
+  - confirmed suspend and reactivate, promote and demote, through the server API;
+  - hash-based navigation, so Back, Forward and refresh work.
 - **Admin dashboard statistics:**
   - six summary cards and a Recently Registered Users table, from `GET /api/v1/admin/dashboard`;
   - loading placeholders, an empty state, and an error state with Retry (no invented values);

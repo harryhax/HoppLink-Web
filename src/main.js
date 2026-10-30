@@ -6,7 +6,7 @@ import { createApi } from './api.js';
 import { createAuth } from './auth.js';
 import { showAlert } from './dom.js';
 import { renderAccount } from './pages/account.js';
-import { renderDashboard } from './pages/dashboard.js';
+import { renderAdminShell } from './pages/admin-shell.js';
 import { renderLogin } from './pages/login.js';
 import { renderStatus } from './pages/status.js';
 
@@ -31,7 +31,7 @@ async function signOut() {
 function render(state) {
   switch (state.view) {
     case 'admin':
-      show(renderDashboard({ user: state.user, api, onSignOut: signOut, onAuthLost: recheckSession }));
+      show(renderAdminShell({ user: state.user, api, onSignOut: signOut, onAuthLost: recheckSession }));
       break;
     case 'user':
       show(renderAccount({ user: state.user, onSignOut: signOut }));

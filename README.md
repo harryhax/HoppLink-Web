@@ -5,9 +5,9 @@ vanilla ES modules, and Vite. It talks to [ProxyMarket Server](../ProxyMarket-Se
 same accounts as the desktop app.
 
 **Status (0.1.0):**
-- **Done:** sign-in, session restore and sign-out; the administrator layout and dashboard (with live
-  statistics); and a simple page for regular users.
-- **Not yet:** user, proxy-server and assignment management.
+- **Done:** sign-in, session restore and sign-out; the administrator layout, dashboard (with live
+  statistics) and **user management**; and a simple page for regular users.
+- **Not yet:** proxy-server and assignment management.
 
 ## Requirements
 
@@ -60,10 +60,35 @@ No production address is built in, and no secrets belong in frontend environment
 | Account | Page |
 |---|---|
 | Not signed in | Sign-in (email, password with show/hide) |
-| `ADMIN` | Admin layout: sidebar (Dashboard; Users, Proxy Servers and Assignments marked "Soon"), top bar, statistics, recently registered users, account details and server status |
+| `ADMIN` | Admin layout: sidebar (Dashboard, Users; Proxy Servers and Assignments marked "Soon"), top bar, and the pages below |
 | `USER` | Account page (name, email, "coming soon" note, sign out). No admin navigation. |
 | Suspended | Access denied |
 | Server unreachable | Connection error with Retry |
+
+## Admin pages
+
+Navigation uses the URL hash, so Back, Forward and refresh behave predictably:
+- `#dashboard`
+- `#users?search=…&page=…`
+- `#users/<id>`
+
+All data comes from ProxyMarket Server's API; the browser never touches the database.
+
+### Users
+
+- **List:** name, email, role, status, active devices, proxy server, registration date and **View
+  Details**. Newest first, 20 per page, with Previous and Next.
+- **Search:** by name or email. The server does the search, with a 300 ms delay after typing.
+- **Details page:**
+  - account information;
+  - devices, with revoked ones marked;
+  - assigned proxy (read-only);
+  - active sessions (an ID prefix, created and expiry times, and browser and IP; no tokens).
+- **Actions:** **Suspend** / **Reactivate** and **Make Administrator** / **Remove Administrator
+  Role**. Each needs confirmation, and the user is reloaded from the server afterwards; nothing changes
+  optimistically.
+- **Your own account:** the server refuses to suspend it or remove its admin role, and the page
+  disables those buttons. The server also keeps at least one active administrator.
 
 ## Admin dashboard statistics
 
@@ -95,4 +120,5 @@ npm test
 They use the Node.js test runner with a fake `fetch`, so no browser or server is needed. They cover:
 - sign-in, error handling, session restore, sign-out, and routing by role and status
   (`tests/auth.test.js`);
-- the dashboard statistics loader (`tests/stats.test.js`).
+- the dashboard statistics loader (`tests/stats.test.js`);
+- the user administration API calls, account actions and routes (`tests/admin-users.test.js`).

@@ -52,6 +52,16 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
     signOut: () => request('/api/v1/auth/sign-out', { method: 'POST', body: {} }),
     accountMe: () => request('/api/v1/account/me'),
     adminDashboard: () => request('/api/v1/admin/dashboard'),
+    listUsers: ({ search = '', page = 1, pageSize = 20 } = {}) => {
+      const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+      if (search.trim()) params.set('search', search.trim());
+      return request(`/api/v1/admin/users?${params}`);
+    },
+    getUser: (id) => request(`/api/v1/admin/users/${encodeURIComponent(id)}`),
+    // Account changes go to Better Auth's admin endpoints (the server enforces every rule).
+    suspendUser: (userId) => request('/api/v1/auth/admin/ban-user', { method: 'POST', body: { userId } }),
+    reactivateUser: (userId) => request('/api/v1/auth/admin/unban-user', { method: 'POST', body: { userId } }),
+    setUserRole: (userId, role) => request('/api/v1/auth/admin/set-role', { method: 'POST', body: { userId, role } }),
   };
 }
 
@@ -68,11 +78,17 @@ export function describeError(result) {
     case 'ACCOUNT_SUSPENDED': return 'This account is suspended. Contact an administrator.';
     case 'VALIDATION_ERROR':
     case 'INVALID_EMAIL': return 'Enter a valid email address and password.';
+    case 'YOU_CANNOT_BAN_YOURSELF': return 'You cannot suspend your own account.';
+    case 'CANNOT_DEMOTE_YOURSELF': return 'You cannot remove your own administrator role.';
+    case 'LAST_ADMINISTRATOR': return 'At least one active administrator must remain.';
+    case 'USER_NOT_FOUND': return 'This user no longer exists.';
     case 'MISSING_OR_NULL_ORIGIN':
     case 'INVALID_ORIGIN': return 'The server does not trust this website\'s address (check BETTER_AUTH_TRUSTED_ORIGINS on the server).';
     default:
       if (result.status === 429) return 'Too many attempts. Wait a few seconds and try again.';
       if (result.status >= 500) return `ProxyMarket Server had a problem (HTTP ${result.status}). Try again later.`;
+      // Other refusals: show the server's own (safe, user-facing) message when it gives one.
+      if (typeof (result.data?.message ?? result.data?.error?.message) === 'string') return result.data.message ?? result.data.error.message;
       return `The request failed (HTTP ${result.status}).`;
   }
 }
