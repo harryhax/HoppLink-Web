@@ -1,0 +1,84 @@
+:root {
+  --pm-sidebar-width: 240px;
+  --pm-bg: #f6f7f9;
+}
+
+body {
+  background: var(--pm-bg);
+  color: #1f2937;
+}
+
+.pm-center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.pm-auth-bg { background: var(--pm-bg); }
+
+.pm-auth-card {
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+}
+
+.pm-status-icon { font-size: 2.5rem; }
+
+/* Admin shell */
+.pm-shell { display: flex; min-height: 100vh; }
+.pm-main { flex: 1; min-width: 0; }
+
+@media (min-width: 992px) {
+  .pm-sidebar {
+    width: var(--pm-sidebar-width);
+    flex-shrink: 0;
+    background: #fff;
+    border-right: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+}
+
+.pm-sidebar-brand {
+  align-items: center;
+  gap: 0.5rem;
+  height: 57px;
+  padding: 0 1.25rem;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.pm-nav { padding: 0.75rem; gap: 2px; }
+.pm-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.5rem;
+  color: #374151;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.925rem;
+}
+.pm-nav .nav-link i { font-size: 1.05rem; }
+.pm-nav .nav-link.active { background: #eef2ff; color: #1d4ed8; font-weight: 500; }
+.pm-nav .nav-link.disabled { color: #9ca3af; }
+.pm-nav .nav-link .badge { font-weight: 500; color: #6b7280; }
+
+.card { border-color: #e5e7eb; border-radius: 0.85rem; }
+.card-header { border-bottom-color: #eef0f3; border-top-left-radius: 0.85rem !important; border-top-right-radius: 0.85rem !important; }
+
+.pm-details dt { color: #6b7280; font-weight: 500; }
+.pm-details dd { margin-bottom: 0.6rem; }
+
+.pm-dot { width: 10px; height: 10px; border-radius: 50%; background: #9ca3af; display: inline-block; }
+.pm-dot-ok { background: #16a34a; }
+.pm-dot-bad { background: #dc2626; }
+
+.pm-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: #eef2ff; color: #1d4ed8;
+  display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
