@@ -1,6 +1,6 @@
 /**
  * Hash routes for the admin area, so Back/Forward and refresh behave predictably:
- *   #dashboard (default) · #users?search=…&page=… · #users/<id>
+ *   #dashboard (default) · #users?search=…&page=… · #users/<id> · #servers
  */
 export function parseRoute(hash) {
   const raw = (hash ?? '').replace(/^#/, '');
@@ -17,6 +17,7 @@ export function parseRoute(hash) {
       return { name: 'users', search: '', page: 1 };
     }
   }
+  if (path === 'servers') return { name: 'servers' };
   return { name: 'dashboard' };
 }
 

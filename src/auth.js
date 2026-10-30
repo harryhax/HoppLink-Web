@@ -41,7 +41,11 @@ export function createAuth(api) {
     const result = await api.signIn(email.trim(), password);
     if (!result.ok) {
       if (result.code === 'BANNED_USER') return suspended();
-      return result.kind === 'network' ? failure(result) : { view: 'login', message: describeError(result) };
+      if (result.kind === 'network') return failure(result);
+      const message = result.code === 'VALIDATION_ERROR' || result.code === 'INVALID_EMAIL'
+        ? 'Enter a valid email address and password.'
+        : describeError(result);
+      return { view: 'login', message };
     }
     return loadAccount();
   }

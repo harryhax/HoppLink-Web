@@ -96,7 +96,7 @@ export function renderDashboardContent({ user, api, onAuthLost }) {
             </div>
           </div>
 
-          <p class="small text-body-secondary mt-4 mb-0"><i class="bi bi-info-circle me-1"></i>Proxy servers and assignments will be managed here in upcoming releases.</p>
+          <p class="small text-body-secondary mt-4 mb-0"><i class="bi bi-info-circle me-1"></i>Proxy assignments will be managed here in an upcoming release.</p>
         </div>`);
 
   text(page, '[data-first]', (user.name || user.email).split(' ')[0]);

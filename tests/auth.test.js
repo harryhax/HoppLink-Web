@@ -104,6 +104,11 @@ describe('sign in', () => {
     assert.deepEqual(await auth.signIn('a@example.test', 'nope'), { view: 'login', message: 'Incorrect email or password.' });
   });
 
+  test('malformed sign-in input keeps the friendly login message', async () => {
+    const { auth } = setup({ 'POST /api/v1/auth/sign-in/email': () => json(400, { code: 'VALIDATION_ERROR', message: '[body.email] Invalid email address' }) });
+    assert.deepEqual(await auth.signIn('not-an-email', 'pw'), { view: 'login', message: 'Enter a valid email address and password.' });
+  });
+
   test('a suspended account is denied', async () => {
     const { auth } = setup({ 'POST /api/v1/auth/sign-in/email': () => json(403, { code: 'BANNED_USER' }) });
     assert.equal((await auth.signIn('a@example.test', 'pw')).view, 'suspended');

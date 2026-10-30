@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 ### Added
+- **Proxy server management:**
+  - a list with assigned-user counts;
+  - an add/edit form, with server-side validation messages kept in the open form;
+  - confirmed disable and delete (deleting an assigned server is refused by the server and
+    explained), all through the existing admin API.
 - **User management:**
   - the Users page: server-side search by name or email, pagination of 20, and View Details;
   - user details: account, devices, assigned proxy and active sessions;
@@ -13,6 +18,11 @@
   - loading placeholders, an empty state, and an error state with Retry (no invented values);
   - Refresh, without polling or duplicate requests;
   - on 401/403, the existing session handling decides what to show.
+
+### Fixed
+- A server `VALIDATION_ERROR` now shows the server's specific message (for example, an invalid host).
+  It no longer shows the login-only "Enter a valid email address and password", which is kept for
+  sign-in only.
 
 ## [0.1.0] - Initial web frontend
 

@@ -62,6 +62,10 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
     suspendUser: (userId) => request('/api/v1/auth/admin/ban-user', { method: 'POST', body: { userId } }),
     reactivateUser: (userId) => request('/api/v1/auth/admin/unban-user', { method: 'POST', body: { userId } }),
     setUserRole: (userId, role) => request('/api/v1/auth/admin/set-role', { method: 'POST', body: { userId, role } }),
+    listProxyServers: () => request('/api/v1/admin/proxy-servers'),
+    createProxyServer: (server) => request('/api/v1/admin/proxy-servers', { method: 'POST', body: server }),
+    updateProxyServer: (id, changes) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(id)}`, { method: 'PATCH', body: changes }),
+    deleteProxyServer: (id) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   };
 }
 
@@ -76,12 +80,14 @@ export function describeError(result) {
     case 'INVALID_EMAIL_OR_PASSWORD': return 'Incorrect email or password.';
     case 'BANNED_USER':
     case 'ACCOUNT_SUSPENDED': return 'This account is suspended. Contact an administrator.';
-    case 'VALIDATION_ERROR':
-    case 'INVALID_EMAIL': return 'Enter a valid email address and password.';
+    case 'INVALID_EMAIL': return 'Enter a valid email address.';
+    // VALIDATION_ERROR falls through: the server's own message says which field is wrong.
     case 'YOU_CANNOT_BAN_YOURSELF': return 'You cannot suspend your own account.';
     case 'CANNOT_DEMOTE_YOURSELF': return 'You cannot remove your own administrator role.';
     case 'LAST_ADMINISTRATOR': return 'At least one active administrator must remain.';
     case 'USER_NOT_FOUND': return 'This user no longer exists.';
+    case 'SERVER_IN_USE': return 'This proxy server has assigned users. Remove its assignments before deleting it.';
+    case 'PROXY_SERVER_NOT_FOUND': return 'This proxy server no longer exists.';
     case 'MISSING_OR_NULL_ORIGIN':
     case 'INVALID_ORIGIN': return 'The server does not trust this website\'s address (check BETTER_AUTH_TRUSTED_ORIGINS on the server).';
     default:

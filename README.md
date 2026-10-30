@@ -6,8 +6,8 @@ same accounts as the desktop app.
 
 **Status (0.1.0):**
 - **Done:** sign-in, session restore and sign-out; the administrator layout, dashboard (with live
-  statistics) and **user management**; and a simple page for regular users.
-- **Not yet:** proxy-server and assignment management.
+  statistics), user management and **proxy server management**; and a simple page for regular users.
+- **Not yet:** assignment management.
 
 ## Requirements
 
@@ -60,7 +60,7 @@ No production address is built in, and no secrets belong in frontend environment
 | Account | Page |
 |---|---|
 | Not signed in | Sign-in (email, password with show/hide) |
-| `ADMIN` | Admin layout: sidebar (Dashboard, Users; Proxy Servers and Assignments marked "Soon"), top bar, and the pages below |
+| `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers; Assignments marked "Soon"), top bar, and the pages below |
 | `USER` | Account page (name, email, "coming soon" note, sign out). No admin navigation. |
 | Suspended | Access denied |
 | Server unreachable | Connection error with Retry |
@@ -71,6 +71,7 @@ Navigation uses the URL hash, so Back, Forward and refresh behave predictably:
 - `#dashboard`
 - `#users?search=…&page=…`
 - `#users/<id>`
+- `#servers`
 
 All data comes from ProxyMarket Server's API; the browser never touches the database.
 
@@ -89,6 +90,21 @@ All data comes from ProxyMarket Server's API; the browser never touches the data
   optimistically.
 - **Your own account:** the server refuses to suspend it or remove its admin role, and the page
   disables those buttons. The server also keeps at least one active administrator.
+
+### Proxy Servers
+
+- **List:** name, host, port, status (green Enabled / grey Disabled), assigned users, created date,
+  and Edit / Enable or Disable / Delete. "No proxy servers configured." when empty.
+- **Add / Edit:** one form for name, host, port and enabled. It checks required fields and the port
+  range (1–65535); the server validates the host and has the final say. If the server refuses, the
+  form stays open with your values and shows its message. Save can't be sent twice.
+- **Disable:** asks for confirmation first, because assigned users then get no proxy configuration.
+  Enabling needs no confirmation.
+- **Delete:** asks for confirmation, naming the server. A server with assigned users can't be
+  deleted: the server refuses it (`SERVER_IN_USE`) and the page explains why. Remove its
+  assignments first.
+- **Records only:** this manages ProxyMarket's records. It never stops, reconfigures or deletes an
+  actual proxy, Squid or any other infrastructure.
 
 ## Admin dashboard statistics
 
@@ -121,4 +137,5 @@ They use the Node.js test runner with a fake `fetch`, so no browser or server is
 - sign-in, error handling, session restore, sign-out, and routing by role and status
   (`tests/auth.test.js`);
 - the dashboard statistics loader (`tests/stats.test.js`);
-- the user administration API calls, account actions and routes (`tests/admin-users.test.js`).
+- the user administration API calls, account actions and routes (`tests/admin-users.test.js`);
+- proxy server API calls, form checks and actions (`tests/proxy-servers.test.js`).
