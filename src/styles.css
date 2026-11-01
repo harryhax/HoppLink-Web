@@ -91,3 +91,18 @@ body {
 }
 .pm-stat-value { font-size: 1.75rem; font-weight: 600; line-height: 1.2; min-height: 2.1rem; }
 .min-w-0 { min-width: 0; }
+
+/* Data transfer */
+.pm-stat-primary { border-color: #bfdbfe; }
+.pm-stat-primary .pm-stat-icon { background: #1d4ed8; color: #fff; }
+.pm-chart { display: flex; align-items: flex-end; gap: 2px; height: 180px; border-bottom: 1px solid #e5e7eb; }
+.pm-chart-empty { align-self: center; width: 100%; text-align: center; }
+.pm-bar { flex: 1 1 0; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; border-radius: 4px 4px 0 0; }
+.pm-bar:hover { background: #f3f4f6; }
+.pm-bar-down { background: #1d4ed8; }
+.pm-bar-up { background: #f59e0b; }
+.pm-bar-top { border-radius: 4px 4px 0 0; }
+.pm-bar-gap { margin-bottom: 2px; }
+.pm-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.35rem; vertical-align: -1px; }
+.pm-swatch-down { background: #1d4ed8; }
+.pm-swatch-up { background: #f59e0b; }

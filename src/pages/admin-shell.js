@@ -1,6 +1,7 @@
 import { html, text } from '../dom.js';
 import { parseRoute } from '../router.js';
 import { renderDashboardContent } from './dashboard.js';
+import { renderDataTransfer } from './data-transfer.js';
 import { renderProxyServers } from './proxy-servers.js';
 import { renderUserDetails } from './user-details.js';
 import { renderUsers } from './users.js';
@@ -9,6 +10,7 @@ const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: 'bi-speedometer2', href: '#dashboard' },
   { id: 'users', label: 'Users', icon: 'bi-people', href: '#users' },
   { id: 'servers', label: 'Proxy Servers', icon: 'bi-hdd-network', href: '#servers' },
+  { id: 'transfer', label: 'Data Transfer', icon: 'bi-arrow-down-up', href: '#transfer' },
 ];
 
 function navItems() {
@@ -70,7 +72,8 @@ export function renderAdminShell({ user, api, onSignOut, onAuthLost }) {
     const page = route.name === 'users' ? renderUsers({ ...context, route })
       : route.name === 'user' ? renderUserDetails({ ...context, id: route.id })
         : route.name === 'servers' ? renderProxyServers(context)
-          : renderDashboardContent(context);
+          : route.name === 'transfer' ? renderDataTransfer({ ...context, route })
+            : renderDashboardContent(context);
     content.replaceChildren(page);
     window.scrollTo(0, 0);
   }

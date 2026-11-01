@@ -1,5 +1,9 @@
 import { describeError } from '../api.js';
 import { confirmDialog, html, showAlert, text } from '../dom.js';
+import { transferHash } from '../router.js';
+import {
+  PERIODS, TERMS, formatAverage, formatBytes, formatCount, formatDateTime, formatExactBytes, loadUserUsage,
+} from '../usage.js';
 import { createUserAdmin, isAuthLoss } from '../user-admin.js';
 
 const formatDate = (value) => (value ? new Date(value).toLocaleString() : '—');
@@ -90,6 +94,17 @@ export function renderUserDetails({ user: me, api, onAuthLost, id, confirm = con
 
           <div class="col-12">
             <div class="card shadow-sm">
+              <div class="card-header bg-white d-flex align-items-center">
+                <span class="fw-semibold me-auto"><i class="bi bi-arrow-down-up me-2 text-primary"></i>Data Transfer</span>
+                <a class="small" data-transfer-link>All users</a>
+              </div>
+              <div data-usage><div class="text-center text-body-secondary small py-3"><span class="spinner-border spinner-border-sm me-2"></span>Loading…</div></div>
+              <div class="card-footer bg-white small text-body-secondary">Recorded when each connection closes, so connections that are still open are not included yet. Periods use UTC.</div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="card shadow-sm">
               <div class="card-header bg-white fw-semibold"><i class="bi bi-laptop me-2 text-primary"></i>Devices</div>
               <div class="table-responsive"><table class="table align-middle mb-0 small">
                 <thead class="table-light"><tr><th>Device name</th><th>Platform</th><th>Registered</th><th>Last seen</th><th>Status</th></tr></thead>
@@ -159,7 +174,53 @@ export function renderUserDetails({ user: me, api, onAuthLost, id, confirm = con
         return row;
       })));
 
+    view.querySelector('[data-transfer-link]').href = transferHash();
     body.replaceChildren(view);
+    loadUsage(view.querySelector('[data-usage]'), user.id);
+  }
+
+  /** The user's Data Transfer section. It loads on its own, so a failure here never hides the account. */
+  async function loadUsage(box, userId) {
+    const result = await loadUserUsage(api, userId);
+    if (!box.isConnected) return;
+    if (result.state === 'auth' && (await onAuthLost?.())) return;
+    if (result.state !== 'ready') {
+      const failure = html(`
+        <div class="d-flex align-items-center gap-2 m-3 small text-danger">
+          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i><span class="me-auto" data-text></span>
+          <button class="btn btn-sm btn-outline-danger" data-retry>Retry</button>
+        </div>`);
+      text(failure, '[data-text]', result.state === 'missing' ? 'This user no longer exists.'
+        : result.state === 'auth' ? 'The server refused access to usage figures for your session.' : result.message);
+      failure.querySelector('[data-retry]').addEventListener('click', () => loadUsage(box, userId));
+      box.replaceChildren(failure);
+      return;
+    }
+    const table = html(`
+      <div>
+        <div class="table-responsive"><table class="table align-middle mb-0 small">
+          <thead class="table-light"><tr><th scope="col">Period</th><th scope="col" class="text-end">${TERMS.down}</th><th scope="col" class="text-end">${TERMS.up}</th>
+            <th scope="col" class="text-end">Total</th><th scope="col" class="text-end">${TERMS.transactions}</th><th scope="col" class="text-end">Average per Connection</th></tr></thead>
+          <tbody data-rows></tbody></table></div>
+        <div class="px-3 py-2 small"><span class="text-body-secondary">${TERMS.lastActivity}:</span> <span data-last></span></div>
+      </div>`);
+    const rows = table.querySelector('[data-rows]');
+    for (const period of PERIODS) {
+      const totals = result.periods[period.id];
+      const row = html('<tr><th scope="row" class="fw-medium"></th><td class="text-end"></td><td class="text-end"></td><td class="text-end fw-medium"></td><td class="text-end"></td><td class="text-end"></td></tr>');
+      const cells = row.children;
+      cells[0].textContent = period.label;
+      [['bytesDown', 1], ['bytesUp', 2], ['bytesTotal', 3]].forEach(([key, i]) => {
+        cells[i].textContent = formatBytes(totals[key]);
+        cells[i].title = formatExactBytes(totals[key]);
+      });
+      cells[4].textContent = formatCount(totals.transactions);
+      cells[5].textContent = formatAverage(totals.avgBytesPerTransaction);
+      cells[5].title = TERMS.averageNote;
+      rows.append(row);
+    }
+    text(table, '[data-last]', formatDateTime(result.periods.all.lastActivityAt));
+    box.replaceChildren(table);
   }
 
   async function run(pending, button) {

@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Added
+- **Data Transfer page** (`#transfer`, sidebar item), from ProxyMarket Server's
+  `GET /api/v1/admin/usage/*`:
+  - a Today / This Month / All Time (UTC) selector that reloads everything together;
+  - Total Transferred, Downloaded, Uploaded and Completed Connections cards, plus users with recorded
+    activity, the average per completed connection and the last recorded activity;
+  - a daily stacked download/upload chart in plain HTML/CSS, with tooltips and a table view;
+  - Usage by User (paginated, largest first, linked to user details) and Usage by Proxy Server
+    (disabled servers included) tables, and a Connection Statistics section;
+  - an explanation that connections are recorded when they close; no live or duration figures.
+- **User details:** a Data Transfer section with Today, This Month and All Time totals, completed
+  connections, the average per connection and the last recorded activity.
+- Byte and count formatting with `BigInt`, so totals beyond 2^53 stay exact.
+
 ### Removed
 - **Proxy assignment administration.** Users will select an enabled proxy server themselves, so
   permanent assignments are gone (the Added entries below that mention them are historical):

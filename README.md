@@ -60,7 +60,7 @@ No production address is built in, and no secrets belong in frontend environment
 | Account | Page |
 |---|---|
 | Not signed in | Sign-in (email, password with show/hide) |
-| `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers), top bar, and the pages below |
+| `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers, Data Transfer), top bar, and the pages below |
 | `USER` | Account page (name, email, "coming soon" note, sign out). No admin navigation. |
 | Suspended | Access denied |
 | Server unreachable | Connection error with Retry |
@@ -72,6 +72,7 @@ Navigation uses the URL hash, so Back, Forward and refresh behave predictably:
 - `#users?search=…&page=…`
 - `#users/<id>`
 - `#servers`
+- `#transfer?period=today|all&page=…` (This Month and page 1 are the defaults)
 
 All data comes from ProxyMarket Server's API; the browser never touches the database.
 
@@ -83,6 +84,9 @@ All data comes from ProxyMarket Server's API; the browser never touches the data
 - **Details page:**
   - account information;
   - devices, with revoked ones marked;
+  - **Data Transfer:** downloaded, uploaded and total transferred, completed connections and the
+    average per connection for Today, This Month and All Time, plus the last recorded activity. It
+    loads separately, so a failure there never hides the account;
   - active sessions (an ID prefix, created and expiry times, and browser and IP; no tokens).
 - **Actions:** **Suspend** / **Reactivate** and **Make Administrator** / **Remove Administrator
   Role**. Each needs confirmation, and the user is reloaded from the server afterwards; nothing changes
@@ -102,6 +106,35 @@ All data comes from ProxyMarket Server's API; the browser never touches the data
 - **Delete:** asks for confirmation, naming the server. Any server can be deleted.
 - **Records only:** this manages ProxyMarket's records. It never stops, reconfigures or deletes an
   actual proxy, Squid or any other infrastructure.
+
+### Data Transfer
+
+Data transferred through the proxy network (the primary figure) and completed connections, from
+`GET /api/v1/admin/usage/*`. Definitions are in ProxyMarket Server's `docs/usage-reporting.md`.
+- **Period:** Today, This Month (default) or All Time, all in **UTC**. Changing it reloads the cards,
+  chart and both tables together, and it's kept in the URL.
+- **Cards:** Total Transferred, Downloaded, Uploaded and Completed Connections, then users with
+  recorded activity, the average per completed connection and the last recorded activity.
+- **Chart:** daily download and upload as stacked bars (plain HTML/CSS, no chart library), with a
+  tooltip per day and a "Daily figures" table. It covers this month to date, the last 30 days (Today)
+  or the last 90 days (All Time, labelled as such). Days without usage are zero.
+- **Usage by User:** every user, largest total first, 20 per page; names link to the user's details.
+  Users without usage show "No activity".
+- **Usage by Proxy Server:** every server, disabled ones included and marked, largest total first,
+  with the number of users with recorded activity. Server totals include unattributed usage
+  (unknown proxy usernames).
+- **Connection Statistics:** completed connections (attributed and unattributed) and the average per
+  completed connection.
+- **Terminology:** a completed connection is an HTTPS tunnel (or plain-HTTP request) recorded when it
+  closes. One tunnel carries many requests, so this isn't a request count, and tunnels that are still
+  open aren't in the totals yet. No live-connection or duration figures are shown, because none are
+  measured yet.
+- **Large numbers:** the server sends byte and transaction figures as decimal strings, and the page
+  formats them with `BigInt` (decimal units: 1 KB = 1,000 bytes). Hover a value for the exact byte
+  count.
+- **Empty, error and session states:** zeroes and a "no usage reported" note when nothing has been
+  collected; an error with **Retry** (figures hidden rather than shown as zeroes) when the server
+  fails or returns malformed data; on 401/403 the session is re-checked as on the dashboard.
 
 ## Admin dashboard statistics
 
@@ -135,4 +168,7 @@ They use the Node.js test runner with a fake `fetch`, so no browser or server is
 - the dashboard statistics loader (`tests/stats.test.js`);
 - the user administration API calls, account actions and routes (`tests/admin-users.test.js`);
 - proxy server API calls, form checks and actions, and that the removed assignment API and route
-  are gone (`tests/proxy-servers.test.js`).
+  are gone (`tests/proxy-servers.test.js`);
+- data transfer reports: API calls, byte and large-number formatting, periods, chart mapping,
+  response validation, loading, error and session states, user details totals, routes and
+  terminology (`tests/data-transfer.test.js`).

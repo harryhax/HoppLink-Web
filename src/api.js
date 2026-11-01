@@ -8,6 +8,16 @@
  *         | { ok: false, status: number, kind: 'network'|'http', code: string|null, data: any }} ApiResult
  */
 
+/** A query string from the defined values only ("" when there are none); values are encoded. */
+function query(params) {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') search.set(key, String(value));
+  }
+  const text = search.toString();
+  return text ? `?${text}` : '';
+}
+
 export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis), baseUrl = '', timeoutMs = 8000 } = {}) {
   /** @returns {Promise<ApiResult>} */
   async function request(path, { method = 'GET', body } = {}) {
@@ -66,6 +76,11 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
     createProxyServer: (server) => request('/api/v1/admin/proxy-servers', { method: 'POST', body: server }),
     updateProxyServer: (id, changes) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(id)}`, { method: 'PATCH', body: changes }),
     deleteProxyServer: (id) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    // Data transfer reports (read-only). Byte and transaction figures come back as decimal strings.
+    usageSummary: ({ period, userId, serverId } = {}) => request(`/api/v1/admin/usage/summary${query({ period, userId, serverId })}`),
+    usageUsers: ({ period, page, pageSize } = {}) => request(`/api/v1/admin/usage/users${query({ period, page, pageSize })}`),
+    usageServers: ({ period } = {}) => request(`/api/v1/admin/usage/servers${query({ period })}`),
+    usageHistory: ({ from, to, userId, serverId } = {}) => request(`/api/v1/admin/usage/history${query({ from, to, userId, serverId })}`),
   };
 }
 
