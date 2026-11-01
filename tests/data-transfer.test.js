@@ -185,12 +185,18 @@ describe('chart', () => {
   test('huge values keep exact strings and sensible heights', () => {
     const days = [
       { date: '2026-11-01', ...totals(BIG, '0', '1'), users: 1 },
-      { date: '2026-11-02', ...totals('9223372036854775807', '0', '1'), users: 1 },
+      { date: '2026-11-02', ...totals('9223372036854775807', '0', '1'), users: 1 }, // exactly half of BIG
+      { date: '2026-11-03', ...totals('9223372036854775806', '0', '1'), users: 1 }, // 2 bytes less than half
     ];
-    const chart = chartBars({ from: '2026-11-01', to: '2026-11-02', days });
+    const chart = chartBars({ from: '2026-11-01', to: '2026-11-03', days });
     assert.equal(chart.bars[0].bytesTotal, BIG);
+    assert.equal(chart.bars[2].bytesTotal, '9223372036854775806');
     assert.equal(chart.bars[0].downPercent, 100);
-    assert.equal(chart.bars[1].downPercent, 49.99);
+    assert.equal(chart.bars[1].downPercent, 50);
+    // Just under half truncates to 49.99. Number arithmetic would round both values to the same
+    // double and give 50, so this checks that the ratio really is computed with BigInt.
+    assert.equal(chart.bars[2].downPercent, 49.99);
+    for (const bar of chart.bars) assert.ok(bar.downPercent >= 0 && bar.downPercent <= 100);
   });
 
   test('no usage gives an empty chart with zero bars, not sample values', () => {
