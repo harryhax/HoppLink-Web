@@ -19,7 +19,7 @@ export function createUserAdmin(api, confirm) {
 
   return {
     suspend: (user) => perform(
-      { title: 'Suspend account?', body: `Are you sure you want to suspend ${user.email}? The user will lose access to protected ProxyMarket services and be signed out.`, confirm: 'Suspend account', danger: true },
+      { title: 'Suspend account?', body: `Are you sure you want to suspend ${user.email}? The user will lose access to protected HoppLink services and be signed out.`, confirm: 'Suspend account', danger: true },
       () => api.suspendUser(user.id),
       'The account was suspended.',
     ),

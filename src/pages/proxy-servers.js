@@ -33,7 +33,7 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
           </table>
         </div>
       </div>
-      <p class="small text-body-secondary mt-3 mb-0"><i class="bi bi-info-circle me-1" aria-hidden="true"></i>These are ProxyMarket's configuration records. Changing or deleting them never stops, reconfigures or removes the proxy itself.</p>
+      <p class="small text-body-secondary mt-3 mb-0"><i class="bi bi-info-circle me-1" aria-hidden="true"></i>These are HoppLink's configuration records. Changing or deleting them never stops, reconfigures or removes the proxy itself.</p>
     </div>`);
 
   const rows = page.querySelector('[data-rows]');

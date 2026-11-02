@@ -55,7 +55,7 @@ describe('api client', () => {
     assert.match(describeError(result), /did not respond/);
   });
 
-  test('reads both Better Auth and ProxyMarket error codes', async () => {
+  test('reads both Better Auth and HoppLink error codes', async () => {
     const { fetch } = fakeFetch({
       'POST /api/v1/auth/sign-in/email': () => json(401, { code: 'INVALID_EMAIL_OR_PASSWORD', message: 'x' }),
       'GET /api/v1/account/me': () => json(403, { error: { code: 'ACCOUNT_SUSPENDED', message: 'x' } }),

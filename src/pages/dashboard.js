@@ -33,7 +33,7 @@ export function renderDashboardContent({ user, api, onAuthLost }) {
           <div class="d-flex flex-wrap align-items-start gap-2 mb-4">
             <div class="me-auto">
               <h1 class="h4 mb-1">Welcome, <span data-first></span></h1>
-              <p class="text-body-secondary mb-0">This is the ProxyMarket administration console.</p>
+              <p class="text-body-secondary mb-0">This is the HoppLink administration console.</p>
             </div>
             <button class="btn btn-sm btn-outline-primary" data-refresh>
               <span class="spinner-border spinner-border-sm me-1" hidden aria-hidden="true"></span><i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>Refresh
@@ -82,7 +82,7 @@ export function renderDashboardContent({ user, api, onAuthLost }) {
             <div class="col-12 col-xl-5">
               <div class="card shadow-sm h-100">
                 <div class="card-header bg-white fw-semibold d-flex align-items-center">
-                  <i class="bi bi-hdd-rack me-2 text-primary"></i>ProxyMarket Server
+                  <i class="bi bi-hdd-rack me-2 text-primary"></i>HoppLink Server
                   <button class="btn btn-sm btn-link ms-auto p-0" data-check><i class="bi bi-arrow-clockwise me-1"></i>Check</button>
                 </div>
                 <div class="card-body">

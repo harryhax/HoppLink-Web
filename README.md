@@ -1,7 +1,7 @@
-# ProxyMarket Web
+# HoppLink Web
 
-The browser interface for ProxyMarket. It's built with plain HTML, Bootstrap 5 and Bootstrap Icons,
-vanilla ES modules, and Vite. It talks to [ProxyMarket Server](../ProxyMarket-Server) and uses the
+The browser interface for HoppLink. It's built with plain HTML, Bootstrap 5 and Bootstrap Icons,
+vanilla ES modules, and Vite. It talks to [HoppLink Server](../ProxyMarket-Server) and uses the
 same accounts as the desktop app.
 
 **Status (0.1.0):**
@@ -12,7 +12,7 @@ same accounts as the desktop app.
 ## Requirements
 
 - Node.js 24 (`nvm use`) and npm
-- A running ProxyMarket Server (default `http://127.0.0.1:3000`)
+- A running HoppLink Server (default `http://127.0.0.1:3000`)
 
 ## Setup
 
@@ -44,7 +44,7 @@ No production address is built in, and no secrets belong in frontend environment
 
 ## Authentication
 
-- **Endpoints:** Better Auth's endpoints on ProxyMarket Server: `sign-in/email`, `get-session` and
+- **Endpoints:** Better Auth's endpoints on HoppLink Server: `sign-in/email`, `get-session` and
   `sign-out`, plus `GET /api/v1/account/me` for the role and status.
 - **Cookies:** the browser keeps Better Auth's **HttpOnly** session cookie. The page never reads,
   stores or receives a token, and doesn't use `localStorage` or `sessionStorage`.
@@ -74,7 +74,7 @@ Navigation uses the URL hash, so Back, Forward and refresh behave predictably:
 - `#servers`
 - `#transfer?period=today|all&page=…` (This Month and page 1 are the defaults)
 
-All data comes from ProxyMarket Server's API; the browser never touches the database.
+All data comes from HoppLink Server's API; the browser never touches the database.
 
 ### Users
 
@@ -104,13 +104,13 @@ All data comes from ProxyMarket Server's API; the browser never touches the data
 - **Disable:** asks for confirmation first, because users can't select a disabled server.
   Enabling needs no confirmation.
 - **Delete:** asks for confirmation, naming the server. Any server can be deleted.
-- **Records only:** this manages ProxyMarket's records. It never stops, reconfigures or deletes an
+- **Records only:** this manages HoppLink's records. It never stops, reconfigures or deletes an
   actual proxy, Squid or any other infrastructure.
 
 ### Data Transfer
 
 Data transferred through the proxy network (the primary figure) and completed connections, from
-`GET /api/v1/admin/usage/*`. Definitions are in ProxyMarket Server's `docs/usage-reporting.md`.
+`GET /api/v1/admin/usage/*`. Definitions are in HoppLink Server's `docs/usage-reporting.md`.
 - **Period:** Today, This Month (default) or All Time, all in **UTC**. Changing it reloads the cards,
   chart and both tables together, and it's kept in the URL.
 - **Cards:** Total Transferred, Downloaded, Uploaded and Completed Connections, then users with
@@ -153,7 +153,7 @@ There's no polling, and a refresh while a load is running doesn't send a second 
 - **401 / 403:** the page re-checks the session and shows the right screen (sign-in, account page or
   suspended).
 
-The definitions of each figure are in ProxyMarket Server's README. Nothing is cached or stored in
+The definitions of each figure are in HoppLink Server's README. Nothing is cached or stored in
 the browser.
 
 ## Tests

@@ -5,7 +5,7 @@ export function renderAccount({ user, onSignOut }) {
   const page = html(`
     <div class="pm-shell-simple">
       <nav class="navbar bg-white border-bottom px-3 px-lg-4">
-        <span class="navbar-brand d-flex align-items-center gap-2 fw-semibold"><img src="/favicon.svg" alt="" width="26" height="26">ProxyMarket</span>
+        <span class="navbar-brand d-flex align-items-center gap-2 fw-semibold"><img src="/favicon.svg" alt="" width="26" height="26">HoppLink</span>
         <button class="btn btn-sm btn-outline-secondary" data-signout><i class="bi bi-box-arrow-right me-1"></i>Sign out</button>
       </nav>
       <main class="container py-5" style="max-width: 640px">
@@ -21,7 +21,7 @@ export function renderAccount({ user, onSignOut }) {
             </div>
             <div class="alert alert-light border small mb-0">
               <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
-              Account management features are coming soon. Use the ProxyMarket desktop app in the meantime.
+              Account management features are coming soon. Use the HoppLink desktop app in the meantime.
             </div>
           </div>
         </div>

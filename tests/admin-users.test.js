@@ -84,7 +84,7 @@ describe('account actions', () => {
     const result = await createUserAdmin(api, confirm).suspend(TARGET);
     assert.deepEqual(result, { outcome: 'cancelled' });
     assert.equal(calls.length, 0);
-    assert.match(questions[0].body, /lose access to protected ProxyMarket services/);
+    assert.match(questions[0].body, /lose access to protected HoppLink services/);
     assert.equal(questions[0].danger, true);
   });
 

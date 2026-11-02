@@ -51,7 +51,7 @@ export function createProxyAdmin(api, confirm) {
       if (server.enabled) {
         const confirmed = await confirm({
           title: 'Disable proxy server?',
-          body: `Disable "${server.name}"? Users won't be able to select it until it is enabled again. This only changes ProxyMarket's record; it does not stop the proxy itself.`,
+          body: `Disable "${server.name}"? Users won't be able to select it until it is enabled again. This only changes HoppLink's record; it does not stop the proxy itself.`,
           confirm: 'Disable server',
           danger: true,
         });
@@ -64,7 +64,7 @@ export function createProxyAdmin(api, confirm) {
     async remove(server) {
       const confirmed = await confirm({
         title: 'Delete proxy server?',
-        body: `Delete "${server.name}" (${server.host}:${server.port}) from ProxyMarket? This removes the configuration record only. It does not stop or delete the proxy itself.`,
+        body: `Delete "${server.name}" (${server.host}:${server.port}) from HoppLink? This removes the configuration record only. It does not stop or delete the proxy itself.`,
         confirm: 'Delete server',
         danger: true,
       });

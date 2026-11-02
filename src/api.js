@@ -1,4 +1,4 @@
-// Thin wrapper over fetch for ProxyMarket Server (same origin: /api is proxied in development and
+// Thin wrapper over fetch for HoppLink Server (same origin: /api is proxied in development and
 // should be served by the same HTTPS origin in production).
 //
 // The browser manages Better Auth's HttpOnly session cookie. This code never reads or stores tokens.
@@ -47,7 +47,7 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
     }
 
     if (response.ok) return { ok: true, status: response.status, data };
-    // Better Auth errors look like {code,message}; ProxyMarket's own like {error:{code,message}}.
+    // Better Auth errors look like {code,message}; HoppLink's own like {error:{code,message}}.
     const code = data?.code ?? data?.error?.code ?? null;
     // 502/503/504 from the dev proxy or a gateway mean the server itself is unreachable.
     const kind = response.status >= 502 && response.status <= 504 ? 'network' : 'http';
@@ -88,8 +88,8 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
 export function describeError(result) {
   if (result.kind === 'network') {
     return result.code === 'TIMEOUT'
-      ? 'ProxyMarket Server did not respond in time. Try again in a moment.'
-      : 'Cannot reach ProxyMarket Server. Check that it is running, then try again.';
+      ? 'HoppLink Server did not respond in time. Try again in a moment.'
+      : 'Cannot reach HoppLink Server. Check that it is running, then try again.';
   }
   switch (result.code) {
     case 'INVALID_EMAIL_OR_PASSWORD': return 'Incorrect email or password.';
@@ -106,7 +106,7 @@ export function describeError(result) {
     case 'INVALID_ORIGIN': return 'The server does not trust this website\'s address (check BETTER_AUTH_TRUSTED_ORIGINS on the server).';
     default:
       if (result.status === 429) return 'Too many attempts. Wait a few seconds and try again.';
-      if (result.status >= 500) return `ProxyMarket Server had a problem (HTTP ${result.status}). Try again later.`;
+      if (result.status >= 500) return `HoppLink Server had a problem (HTTP ${result.status}). Try again later.`;
       // Other refusals: show the server's own (safe, user-facing) message when it gives one.
       if (typeof (result.data?.message ?? result.data?.error?.message) === 'string') return result.data.message ?? result.data.error.message;
       return `The request failed (HTTP ${result.status}).`;

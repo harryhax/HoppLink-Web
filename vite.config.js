@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 
-// The site and its API share one origin: the dev server forwards /api to ProxyMarket Server, so the
+// The site and its API share one origin: the dev server forwards /api to HoppLink Server, so the
 // browser sends Better Auth's cookie itself and no CORS is involved.
 //
 // The browser's Origin header (http://127.0.0.1:5173) is passed through unchanged, and the server

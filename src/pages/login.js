@@ -7,10 +7,10 @@ export function renderLogin({ onSignIn, message, tone }) {
         <div class="card-body p-4 p-sm-5">
           <div class="d-flex align-items-center gap-2 mb-4">
             <img src="/favicon.svg" alt="" width="32" height="32">
-            <span class="fs-4 fw-semibold">ProxyMarket</span>
+            <span class="fs-4 fw-semibold">HoppLink</span>
           </div>
           <h1 class="h5 mb-1">Sign in</h1>
-          <p class="text-body-secondary small mb-4">Use your ProxyMarket account, the same one as in the desktop app.</p>
+          <p class="text-body-secondary small mb-4">Use your HoppLink account, the same one as in the desktop app.</p>
           <div data-alert hidden role="alert"></div>
           <form novalidate>
             <div class="mb-3">
