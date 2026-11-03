@@ -1,7 +1,7 @@
 # HoppLink Web
 
 The browser interface for HoppLink. It's built with plain HTML, Bootstrap 5 and Bootstrap Icons,
-vanilla ES modules, and Vite. It talks to [HoppLink Server](../ProxyMarket-Server) and uses the
+vanilla ES modules, and Vite. It talks to [HoppLink Server](../HoppLink-Server) and uses the
 same accounts as the desktop app.
 
 **Status (0.1.0):**
@@ -28,7 +28,7 @@ In development, the site calls the API on its own origin. Vite forwards `/api/*`
 `PROXYMARKET_API_TARGET` (default `http://127.0.0.1:3000`; see `.env.example`). So the browser
 handles cookies itself, and no CORS is needed.
 
-The server must trust the site's origin. In `ProxyMarket-Server/.env`:
+The server must trust the site's origin. In `HoppLink-Server/.env`:
 
 ```env
 BETTER_AUTH_TRUSTED_ORIGINS=http://127.0.0.1:5173
