@@ -1,6 +1,6 @@
 import { html, showAlert } from '../dom.js';
 
-export function renderLogin({ onSignIn, message, tone }) {
+export function renderLogin({ onSignIn, onCreateAccount, message, tone }) {
   const page = html(`
     <main class="pm-center pm-auth-bg">
       <div class="card pm-auth-card shadow-sm">
@@ -30,6 +30,7 @@ export function renderLogin({ onSignIn, message, tone }) {
               <span class="spinner-border spinner-border-sm me-2" hidden aria-hidden="true"></span>Sign in
             </button>
           </form>
+          <button class="btn btn-link btn-sm w-100 mt-3" type="button" data-create-account>Create an account</button>
         </div>
       </div>
     </main>`);
@@ -39,6 +40,7 @@ export function renderLogin({ onSignIn, message, tone }) {
   const toggle = page.querySelector('[data-toggle-password]');
   const submit = page.querySelector('[data-submit]');
   showAlert(page, message, tone);
+  page.querySelector('[data-create-account]').addEventListener('click', onCreateAccount);
 
   toggle.addEventListener('click', () => {
     const show = password.type === 'password';

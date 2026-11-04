@@ -60,8 +60,9 @@ no secrets belong in frontend environment variables.
 
 | Account | Page |
 |---|---|
-| Not signed in | Sign-in (email, password with show/hide) |
-| `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers, Data Transfer), top bar, and the pages below |
+| Not signed in | Sign-in (email, password with show/hide), with a link to the registration screen |
+| Registration | The form if the server reports registration is open; otherwise a message that it's unavailable, with a way back to sign-in |
+| `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers, Data Transfer, Settings), top bar, and the pages below |
 | `USER` | Account page (name, email, "coming soon" note, sign out). No admin navigation. |
 | Suspended | Access denied |
 | Server unreachable | Connection error with Retry |
@@ -74,6 +75,7 @@ Navigation uses the URL hash, so Back, Forward and refresh behave predictably:
 - `#users/<id>`
 - `#servers`
 - `#transfer?period=today|all&page=…` (This Month and page 1 are the defaults)
+- `#settings`
 
 All data comes from HoppLink Server's API; the browser never touches the database.
 
@@ -107,6 +109,13 @@ All data comes from HoppLink Server's API; the browser never touches the databas
 - **Delete:** asks for confirmation, naming the server. Any server can be deleted.
 - **Records only:** this manages HoppLink's records. It never stops, reconfigures or deletes an
   actual proxy, Squid or any other infrastructure.
+
+### Settings
+
+**Public Registration** shows the setting from the server as Enabled or Disabled, with a switch to
+change it. The switch moves only once the server confirms the change, and it's disabled while saving. If a
+save fails, the page keeps the last confirmed state and shows the error. The server enforces the setting on
+every sign-up, so hiding the registration form isn't what protects it.
 
 ### Data Transfer
 
@@ -170,6 +179,9 @@ They use the Node.js test runner with a fake `fetch`, so no browser or server is
 - the user administration API calls, account actions and routes (`tests/admin-users.test.js`);
 - proxy server API calls, form checks and actions, and that the removed assignment API and route
   are gone (`tests/proxy-servers.test.js`);
+- public registration: API calls, the admin control's loading, saving and failure handling, and which
+  registration screen appears (`tests/registration.test.js`). The tests have no DOM, so they cover this
+  logic and check the page sources statically, but don't render the pages;
 - data transfer reports: API calls, byte and large-number formatting, periods, chart mapping,
   response validation, loading, error and session states, user details totals, routes and
   terminology (`tests/data-transfer.test.js`).

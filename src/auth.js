@@ -1,4 +1,5 @@
 import { describeError } from './api.js';
+import { REGISTRATION_UNAVAILABLE } from './registration.js';
 
 /**
  * Authentication state for the page. The server is the authority: the role shown here only picks
@@ -6,6 +7,7 @@ import { describeError } from './api.js';
  *
  * Possible states:
  *   { view: 'login', message? }               no valid session
+ *   { view: 'register' }                      registration screen
  *   { view: 'admin', user }                   active ADMIN (role from /api/v1/account/me)
  *   { view: 'user', user }                    active USER
  *   { view: 'suspended', message }            account is suspended
@@ -51,6 +53,21 @@ export function createAuth(api) {
   }
 
   /**
+   * Registers through Better Auth, which signs the new user in. A refusal returns { refused } for the
+   * registration screen: { screen: 'unavailable', message } when the server says registration is
+   * closed, otherwise { message }.
+   */
+  async function signUp(values) {
+    const result = await api.signUp(values);
+    if (!result.ok) {
+      if (result.code === 'REGISTRATION_DISABLED') return { refused: { screen: 'unavailable', message: REGISTRATION_UNAVAILABLE } };
+      if (result.kind === 'network') return failure(result);
+      return { refused: { message: describeError(result) } };
+    }
+    return loadAccount();
+  }
+
+  /**
    * On success: { view: 'login' }. On failure: { view: 'stay', message }. The HttpOnly cookie can only
    * be cleared by the server, so an unconfirmed sign-out leaves the user where they are (still signed
    * in) instead of pretending the session ended.
@@ -61,7 +78,7 @@ export function createAuth(api) {
     return { view: 'stay', message: `Sign-out failed and your session is still active. ${describeError(result)}` };
   }
 
-  return { restore, signIn, signOut };
+  return { restore, signIn, signUp, signOut };
 }
 
 function suspended() {

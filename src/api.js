@@ -60,6 +60,10 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
     getSession: () => request('/api/v1/auth/get-session'),
     signIn: (email, password) => request('/api/v1/auth/sign-in/email', { method: 'POST', body: { email, password } }),
     signOut: () => request('/api/v1/auth/sign-out', { method: 'POST', body: {} }),
+    signUp: ({ name, email, password }) => request('/api/v1/auth/sign-up/email', { method: 'POST', body: { name, email, password } }),
+    registrationAvailability: () => request('/api/v1/registration'),
+    getRegistrationSetting: () => request('/api/v1/admin/settings/public-registration'),
+    setRegistrationSetting: (publicRegistrationEnabled) => request('/api/v1/admin/settings/public-registration', { method: 'PUT', body: { publicRegistrationEnabled } }),
     accountMe: () => request('/api/v1/account/me'),
     adminDashboard: () => request('/api/v1/admin/dashboard'),
     listUsers: ({ search = '', page = 1, pageSize = 20 } = {}) => {
@@ -101,6 +105,10 @@ export function describeError(result) {
     case 'BANNED_USER':
     case 'ACCOUNT_SUSPENDED': return 'This account is suspended. Contact an administrator.';
     case 'INVALID_EMAIL': return 'Enter a valid email address.';
+    case 'USER_ALREADY_EXISTS':
+    case 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL': return 'An account with this email already exists. Try signing in.';
+    case 'PASSWORD_TOO_SHORT':
+    case 'PASSWORD_TOO_LONG': return 'The password must be 8-128 characters.';
     // VALIDATION_ERROR falls through: the server's own message says which field is wrong.
     case 'YOU_CANNOT_BAN_YOURSELF': return 'You cannot suspend your own account.';
     case 'CANNOT_DEMOTE_YOURSELF': return 'You cannot remove your own administrator role.';

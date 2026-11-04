@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Added
+- **Public registration** (Step 26). A new Settings page lets administrators turn public registration on or
+  off, showing only states the server has confirmed. The sign-in page links to a registration screen, which
+  shows the form only while the server reports registration is open. Needs HoppLink Server from the same step.
 - **Automatic deployment** (Step 25, see `docs/deployment.md`). Each push to `main` is tested and built, then
   that exact commit is built on the server, published as a new release with an atomic switch, and verified
   from outside. The frontend's relative `/api` requests go through Nginx on the same origin.

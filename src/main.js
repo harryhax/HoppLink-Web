@@ -8,6 +8,7 @@ import { showAlert } from './dom.js';
 import { renderAccount } from './pages/account.js';
 import { renderAdminShell } from './pages/admin-shell.js';
 import { renderLogin } from './pages/login.js';
+import { renderRegister } from './pages/register.js';
 import { renderStatus } from './pages/status.js';
 
 const root = document.getElementById('app');
@@ -42,10 +43,23 @@ function render(state) {
     case 'offline':
       show(renderStatus({ kind: 'offline', message: state.message, onRetry: start }));
       break;
+    case 'register':
+      show(renderRegister({
+        api,
+        onBack: () => render({ view: 'login' }),
+        onRegister: async (values) => {
+          const next = await auth.signUp(values);
+          if (next.refused) return next.refused;
+          render(next);
+          return null;
+        },
+      }));
+      break;
     default:
       show(renderLogin({
         message: state.message,
         tone: state.tone,
+        onCreateAccount: () => render({ view: 'register' }),
         onSignIn: async (email, password) => {
           const next = await auth.signIn(email, password);
           if (next.view === 'login') return next.message;

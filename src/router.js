@@ -1,6 +1,6 @@
 /**
  * Hash routes for the admin area, so Back/Forward and refresh behave predictably:
- *   #dashboard (default) · #users?search=…&page=… · #users/<id> · #servers · #transfer?period=…&page=…
+ *   #dashboard (default) · #users?search=…&page=… · #users/<id> · #servers · #transfer?period=…&page=… · #settings
  */
 const TRANSFER_PERIODS = ['today', 'month', 'all'];
 
@@ -20,6 +20,7 @@ export function parseRoute(hash) {
     }
   }
   if (path === 'servers') return { name: 'servers' };
+  if (path === 'settings') return { name: 'settings' };
   if (path === 'transfer') {
     const page = Number.parseInt(params.get('page') ?? '1', 10);
     const period = TRANSFER_PERIODS.includes(params.get('period')) ? params.get('period') : 'month';
