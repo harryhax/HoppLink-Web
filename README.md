@@ -38,9 +38,10 @@ Then restart the server. Open the site at **`http://127.0.0.1:5173`**, not `loca
 that origin. The proxy deliberately forwards the browser's real `Origin`, because rewriting it would
 defeat the server's CSRF check.
 
-**In production,** serve the site and `/api` from the same HTTPS origin, for example behind a
-reverse proxy, and set that origin on the server (`BETTER_AUTH_URL` / `BETTER_AUTH_TRUSTED_ORIGINS`).
-No production address is built in, and no secrets belong in frontend environment variables.
+**In production,** the site and `/api` share one HTTPS origin, with Nginx forwarding `/api` to HoppLink
+Server, and that origin must be trusted on the server (`BETTER_AUTH_TRUSTED_ORIGINS`). Pushes to `main`
+deploy automatically: see [docs/deployment.md](docs/deployment.md). No production address is built in, and
+no secrets belong in frontend environment variables.
 
 ## Authentication
 

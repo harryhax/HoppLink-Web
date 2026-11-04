@@ -1,0 +1,99 @@
+# Tests and builds each push to main, then deploys that exact commit to the production web server. See
+# docs/deployment.md. Hosts and AWS identifiers come from repository variables, not Git.
+name: Deploy Web
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+# One web deployment at a time, in push order. A running deployment is never cancelled, so the server
+# script can always finish. This group is separate from the API's, so the two deploy independently.
+concurrency:
+  group: production-web-deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Tests and npm install scripts get no ability to request AWS credentials.
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the pushed commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      COMMIT_SHA: ${{ github.sha }}
+      INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
+      PUBLIC_WEB_URL: ${{ vars.PUBLIC_WEB_URL }}
+      PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+    steps:
+      - name: Check out the pushed commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Check repository variables
+        env:
+          AWS_DEPLOY_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          DEPLOY_AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          missing=0
+          for name in AWS_DEPLOY_ROLE_ARN DEPLOY_AWS_REGION INSTANCE_ID PUBLIC_WEB_URL PUBLIC_API_URL; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository variable for $name is not set; see docs/deployment.md"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Deploy through AWS Systems Manager
+        run: bash deploy/central/ssm-deploy.sh
+
+      - name: Verify the public website and API routing
+        run: node scripts/verify-web-deployment.js "$PUBLIC_WEB_URL" "$PUBLIC_API_URL" "$COMMIT_SHA"
+
+      - name: Report the deployed commit
+        run: |
+          echo "Deployed commit: $COMMIT_SHA"
+          echo "Deployed commit: \`$COMMIT_SHA\`" >> "$GITHUB_STEP_SUMMARY"
