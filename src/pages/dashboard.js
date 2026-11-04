@@ -1,3 +1,4 @@
+import { isHoppLinkServerHealth } from '../api.js';
 import { html, text } from '../dom.js';
 import { createStatsLoader } from '../stats.js';
 
@@ -111,7 +112,7 @@ export function renderDashboardContent({ user, api, onAuthLost }) {
     text(page, '[data-health]', 'Checking…');
     text(page, '[data-health-detail]', '');
     const result = await api.health();
-    const connected = result.ok && result.data?.status === 'ok' && result.data?.service === 'proxymarket-server';
+    const connected = result.ok && isHoppLinkServerHealth(result.data);
     dot.className = `pm-dot ${connected ? 'pm-dot-ok' : 'pm-dot-bad'}`;
     text(page, '[data-health]', connected ? 'Connected' : 'Disconnected');
     text(page, '[data-health-detail]', connected ? `Version ${result.data.version}` : 'The server could not be reached or returned an error.');

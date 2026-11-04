@@ -84,6 +84,11 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
   };
 }
 
+/** True only for a healthy response from HoppLink Server itself, identified by its exact service name. */
+export function isHoppLinkServerHealth(data) {
+  return data?.status === 'ok' && data?.service === 'hopplink-server';
+}
+
 /** A short, user-facing explanation for a failed ApiResult. */
 export function describeError(result) {
   if (result.kind === 'network') {

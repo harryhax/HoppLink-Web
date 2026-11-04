@@ -3,10 +3,12 @@
 ## [Unreleased]
 
 ### Changed
+- **Health check requires `hopplink-server`** (Step 22A): the dashboard shows Connected only when the server
+  reports exactly this service identifier, so it needs a server from the same step.
 - **Renamed to HoppLink** (Step 22): the browser title, sign-in page, navigation, dashboard, dialogs and
   error messages now say HoppLink and HoppLink Server. Entries below keep the name in use at the time.
   Layout, styling and API calls are unchanged, as are internal identifiers (`PROXYMARKET_API_TARGET`,
-  the package name, the server's `proxymarket-server` health identifier).
+  the package name).
 
 ### Added
 - **Data Transfer page** (`#transfer`, sidebar item), from ProxyMarket Server's
