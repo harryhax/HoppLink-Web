@@ -97,3 +97,11 @@ jobs:
         run: |
           echo "Deployed commit: $COMMIT_SHA"
           echo "Deployed commit: \`$COMMIT_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Validate verification arguments
+        run: |
+          echo "WEB URL: [$PUBLIC_WEB_URL]"
+          echo "API URL: [$PUBLIC_API_URL]"
+          echo "COMMIT SHA length: ${#COMMIT_SHA}"
+          echo "WEB URL length: ${#PUBLIC_WEB_URL}"
+          echo "API URL length: ${#PUBLIC_API_URL}"
