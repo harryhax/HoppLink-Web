@@ -71,6 +71,14 @@ describe('validateServerForm', () => {
   });
 });
 
+describe('deleting a server', () => {
+  test('warns that its routing rules go with it', async () => {
+    const { admin, questions } = setup(() => json(204));
+    await admin.remove(SERVER);
+    assert.match(questions[0].body, /its routing rules/);
+  });
+});
+
 describe('add and edit', () => {
   test('a valid form creates a server', async () => {
     const { admin, calls } = setup(() => json(201, { server: SERVER }));

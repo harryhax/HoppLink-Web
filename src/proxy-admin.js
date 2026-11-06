@@ -64,7 +64,7 @@ export function createProxyAdmin(api, confirm) {
     async remove(server) {
       const confirmed = await confirm({
         title: 'Delete proxy server?',
-        body: `Delete "${server.name}" (${server.host}:${server.port}) from HoppLink? This removes the configuration record only. It does not stop or delete the proxy itself.`,
+        body: `Delete "${server.name}" (${server.host}:${server.port}) from HoppLink? This removes the configuration record and its routing rules. It does not stop or delete the proxy itself.`,
         confirm: 'Delete server',
         danger: true,
       });

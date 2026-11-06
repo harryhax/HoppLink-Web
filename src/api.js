@@ -18,11 +18,14 @@ function query(params) {
   return text ? `?${text}` : '';
 }
 
+const SYNC_STATUS_TIMEOUT_MS = 20_000;
+const SYNC_TIMEOUT_MS = 150_000;
+
 export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis), baseUrl = '', timeoutMs = 8000 } = {}) {
   /** @returns {Promise<ApiResult>} */
-  async function request(path, { method = 'GET', body } = {}) {
+  async function request(path, { method = 'GET', body, timeout = timeoutMs } = {}) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const timer = setTimeout(() => controller.abort(), timeout);
     let response;
     try {
       response = await fetchImpl(baseUrl + path, {
@@ -80,6 +83,16 @@ export function createApi({ fetch: fetchImpl = globalThis.fetch.bind(globalThis)
     createProxyServer: (server) => request('/api/v1/admin/proxy-servers', { method: 'POST', body: server }),
     updateProxyServer: (id, changes) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(id)}`, { method: 'PATCH', body: changes }),
     deleteProxyServer: (id) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    // Routing rules for one proxy server. PAC routing doesn't use them yet: only a synchronization reaches Squid.
+    listRoutingDomains: (serverId) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(serverId)}/domains`),
+    createRoutingDomain: (serverId, domain) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(serverId)}/domains`, { method: 'POST', body: domain }),
+    updateRoutingDomain: (serverId, domainId, changes) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(serverId)}/domains/${encodeURIComponent(domainId)}`, { method: 'PATCH', body: changes }),
+    deleteRoutingDomain: (serverId, domainId) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(serverId)}/domains/${encodeURIComponent(domainId)}`, { method: 'DELETE' }),
+    copyRoutingDomains: (serverId, sourceServerId) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(serverId)}/domains/copy`, { method: 'POST', body: { sourceServerId } }),
+    // These wait for a proxy node, which can be much slower than HoppLink Server itself.
+    routingSyncStatus: (serverId) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(serverId)}/domains/sync/status`, { timeout: SYNC_STATUS_TIMEOUT_MS }),
+    syncRoutingDomains: (serverId, { confirmEmpty = false } = {}) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(serverId)}/domains/sync`, { method: 'POST', body: confirmEmpty ? { confirmEmpty: true } : {}, timeout: SYNC_TIMEOUT_MS }),
+    pacPreview: (serverId) => request(`/api/v1/admin/proxy-servers/${encodeURIComponent(serverId)}/pac/preview`),
     // Data transfer reports (read-only). Byte and transaction figures come back as decimal strings.
     usageSummary: ({ period, userId, serverId } = {}) => request(`/api/v1/admin/usage/summary${query({ period, userId, serverId })}`),
     usageUsers: ({ period, page, pageSize } = {}) => request(`/api/v1/admin/usage/users${query({ period, page, pageSize })}`),
@@ -115,6 +128,10 @@ export function describeError(result) {
     case 'LAST_ADMINISTRATOR': return 'At least one active administrator must remain.';
     case 'USER_NOT_FOUND': return 'This user no longer exists.';
     case 'PROXY_SERVER_NOT_FOUND': return 'This proxy server no longer exists.';
+    case 'DUPLICATE_ROUTING_DOMAIN': return 'This proxy server already has that domain.';
+    case 'ROUTING_DOMAIN_NOT_FOUND': return 'This routing rule no longer exists.';
+    case 'SAME_PROXY_SERVER': return 'A proxy server\'s rules can\'t be copied onto itself.';
+    case 'PROXY_SERVER_INVALID': return 'This proxy server\'s host or port isn\'t valid, so no preview can be generated. Edit the server to fix it.';
     case 'MISSING_OR_NULL_ORIGIN':
     case 'INVALID_ORIGIN': return 'The server does not trust this website\'s address (check BETTER_AUTH_TRUSTED_ORIGINS on the server).';
     default:

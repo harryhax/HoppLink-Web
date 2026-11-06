@@ -2,10 +2,11 @@ import { describeError } from '../api.js';
 import { confirmDialog, html, showAlert, text } from '../dom.js';
 import { createProxyAdmin } from '../proxy-admin.js';
 import { isAuthLoss } from '../user-admin.js';
+import { createRoutingPanel } from './routing-rules.js';
 
 const formatDate = (value) => (value ? new Date(value).toLocaleString() : '—');
 
-/** Proxy server administration: list, add, edit, enable/disable and delete (records only). */
+/** Proxy server administration: list, add, edit, enable/disable, delete (records only) and routing rules. */
 export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog }) {
   const actions = createProxyAdmin(api, confirm);
   const page = html(`
@@ -37,6 +38,11 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
     </div>`);
 
   const rows = page.querySelector('[data-rows]');
+  const markSelected = () => {
+    for (const tr of rows.querySelectorAll('tr[data-server-id]')) tr.classList.toggle('table-active', tr.dataset.serverId === routing.selectedId);
+  };
+  const routing = createRoutingPanel({ api, onAuthLost, confirm, onClose: markSelected });
+  page.querySelector('.card').after(routing.element);
   const errorBox = page.querySelector('[data-error]');
   let latest = 0;
 
@@ -63,11 +69,14 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
       return;
     }
     if (servers.length === 0) {
+      routing.sync(servers);
       placeholder('No proxy servers configured.<div class="mt-3"><button class="btn btn-sm btn-primary" data-add-empty><i class="bi bi-plus-lg me-1"></i>Add Proxy Server</button></div>');
       rows.querySelector('[data-add-empty]').addEventListener('click', () => openForm());
       return;
     }
     rows.replaceChildren(...servers.map(row));
+    routing.sync(servers);
+    markSelected();
   }
 
   function row(server) {
@@ -75,10 +84,12 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
       <td data-c="name" class="fw-medium"></td><td data-c="host" class="font-monospace text-break"></td><td data-c="port" class="font-monospace"></td>
       <td><span data-c="status"></span></td><td data-c="created" class="text-nowrap"></td>
       <td class="text-end text-nowrap">
+        <button class="btn btn-sm btn-outline-secondary" data-routing><i class="bi bi-signpost-split me-1" aria-hidden="true"></i>Routing Rules</button>
         <button class="btn btn-sm btn-outline-secondary" data-edit><i class="bi bi-pencil me-1" aria-hidden="true"></i>Edit</button>
         <button class="btn btn-sm" data-toggle></button>
         <button class="btn btn-sm btn-outline-danger" data-delete><i class="bi bi-trash me-1" aria-hidden="true"></i>Delete</button>
       </td></tr>`);
+    tr.dataset.serverId = server.id;
     text(tr, '[data-c="name"]', server.name);
     text(tr, '[data-c="host"]', server.host);
     text(tr, '[data-c="port"]', String(server.port));
@@ -90,6 +101,10 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
     const toggle = tr.querySelector('[data-toggle]');
     toggle.textContent = server.enabled ? 'Disable' : 'Enable';
     toggle.classList.add(server.enabled ? 'btn-outline-warning' : 'btn-outline-success');
+    tr.querySelector('[data-routing]').addEventListener('click', () => {
+      routing.select(server);
+      markSelected();
+    });
     tr.querySelector('[data-edit]').addEventListener('click', () => openForm(server));
     toggle.addEventListener('click', () => act(actions.toggle(server), toggle));
     tr.querySelector('[data-delete]').addEventListener('click', (event) => act(actions.remove(server), event.currentTarget));
