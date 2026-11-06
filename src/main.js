@@ -4,9 +4,11 @@ import 'bootstrap/js/dist/offcanvas.js';
 import './styles.css';
 import { createApi } from './api.js';
 import { createAuth } from './auth.js';
+import { isDownloadsPath } from './downloads.js';
 import { showAlert } from './dom.js';
 import { renderAccount } from './pages/account.js';
 import { renderAdminShell } from './pages/admin-shell.js';
+import { renderDownloads } from './pages/downloads.js';
 import { renderLogin } from './pages/login.js';
 import { renderRegister } from './pages/register.js';
 import { renderStatus } from './pages/status.js';
@@ -86,4 +88,10 @@ async function start() {
   render(await auth.restore());
 }
 
-start();
+// /downloads is public: it shows the release manifest and never checks for a session. Nginx serves this same page
+// for it, through its fallback to index.html. Everything else is the signed-in application.
+if (isDownloadsPath(window.location.pathname)) {
+  show(renderDownloads());
+} else {
+  start();
+}

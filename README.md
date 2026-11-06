@@ -61,11 +61,22 @@ no secrets belong in frontend environment variables.
 | Account | Page |
 |---|---|
 | Not signed in | Sign-in (email, password with show/hide), with a link to the registration screen |
+| Anyone, at `/downloads` | Public downloads page: the desktop app builds from the release manifest, or "Downloads coming soon". No sign-in. |
 | Registration | The form if the server reports registration is open; otherwise a message that it's unavailable, with a way back to sign-in |
 | `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers, Data Transfer, Settings), top bar, and the pages below |
 | `USER` | Account page (name, email, "coming soon" note, sign out). No admin navigation. |
 | Suspended | Access denied |
 | Server unreachable | Connection error with Retry |
+
+## Downloads page
+
+`/downloads` is public and never checks for a session. It reads the release manifest at
+`/downloads/releases/manifest.json` and shows a card for each available build: Windows (x64) and macOS
+(Apple Silicon and Intel), with the version, release date, size and checksum when the manifest gives them,
+and any release notes. A platform without a valid build isn't shown, and with no manifest the page says
+"Downloads coming soon". The builds and manifest are uploaded by hand to the server, outside the website's
+releases: see "Desktop app downloads" in [docs/deployment.md](docs/deployment.md). In development there's no
+manifest, so the page shows "Downloads coming soon".
 
 ## Admin pages
 
@@ -203,3 +214,6 @@ They use the Node.js test runner with a fake `fetch`, so no browser or server is
 - data transfer reports: API calls, byte and large-number formatting, periods, chart mapping,
   response validation, loading, error and session states, user details totals, routes and
   terminology (`tests/data-transfer.test.js`).
+- the downloads page: manifest validation (versions, dates, file names, sizes, checksums, notes),
+  links that stay in the releases directory, loading, empty and error states, the public route, and the
+  Nginx locations for the builds (`tests/downloads.test.js`).
