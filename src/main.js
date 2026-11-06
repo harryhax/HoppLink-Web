@@ -6,6 +6,7 @@ import { createApi } from './api.js';
 import { createAuth } from './auth.js';
 import { isDownloadsPath } from './downloads.js';
 import { showAlert } from './dom.js';
+import { homeRedirect } from './home-redirect.js';
 import { renderAccount } from './pages/account.js';
 import { renderAdminShell } from './pages/admin-shell.js';
 import { renderDownloads } from './pages/downloads.js';
@@ -88,9 +89,13 @@ async function start() {
   render(await auth.restore());
 }
 
-// /downloads is public: it shows the release manifest and never checks for a session. Nginx serves this same page
-// for it, through its fallback to index.html. Everything else is the signed-in application.
-if (isDownloadsPath(window.location.pathname)) {
+// / redirects to /downloads for now (see home-redirect.js). /downloads is public: it shows the release manifest and
+// never checks for a session. Nginx serves this same page for it, through its fallback to index.html. Everything else
+// is the signed-in application.
+const redirect = homeRedirect(window.location.pathname, window.location.hash);
+if (redirect) {
+  window.location.replace(redirect);
+} else if (isDownloadsPath(window.location.pathname)) {
   show(renderDownloads());
 } else {
   start();

@@ -269,7 +269,7 @@ describe('the public route', () => {
 
   test('main.js renders it without restoring a session, and starts the app for everything else', () => {
     const main = read('../src/main.js');
-    assert.match(main, /if \(isDownloadsPath\(window\.location\.pathname\)\) \{\n {2}show\(renderDownloads\(\)\);\n\} else \{\n {2}start\(\);\n\}\n$/);
+    assert.match(main, /\} else if \(isDownloadsPath\(window\.location\.pathname\)\) \{\n {2}show\(renderDownloads\(\)\);\n\} else \{\n {2}start\(\);\n\}\n$/);
     assert.equal(main.match(/^start\(\);$/m), null, 'start() is not also called unconditionally');
   });
 

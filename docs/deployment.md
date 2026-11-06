@@ -135,8 +135,21 @@ lines alone, and don't change the API's `server` block. Then test and reload:
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
-The router uses `#` addresses, so refreshing always requests `/`. The `location /` fallback also serves the
-frontend for any other address, while a missing file under `/assets/` stays a 404.
+The `location /` fallback serves the frontend for any address, while a missing file under `/assets/` stays a 404.
+
+**Temporary homepage redirect.** `location = /` answers the homepage with an HTTP **302** to `/downloads`. This is
+an Nginx change: it takes effect only once this file is installed again on the server and Nginx is reloaded, as
+above. Deploying the website doesn't do it. Until then, the browser-side redirect in `src/home-redirect.js` sends
+visitors on, but the server still answers `/` with the page and HTTP 200. Only `/` is redirected. The signed-in
+application loads from `/login`, which the downloads page's **Sign in** links to, and its `#` addresses go there
+too. To remove the redirect, delete the `location = /` block, `src/home-redirect.js` and its use in `src/main.js`, and
+set **Sign in** back to `/`. Check it with:
+
+```bash
+curl -sI https://www.example.com/ | grep -iE '^(HTTP|location)'   # HTTP/2 302, location: …/downloads
+curl -sI https://www.example.com/downloads | head -1                  # HTTP/2 200
+curl -sI https://www.example.com/login | head -1                      # HTTP/2 200
+```
 
 ### Deployment script
 

@@ -62,6 +62,7 @@ no secrets belong in frontend environment variables.
 |---|---|
 | Not signed in | Sign-in (email, password with show/hide), with a link to the registration screen |
 | Anyone, at `/downloads` | Public downloads page: the desktop app builds from the release manifest, or "Downloads coming soon". No sign-in. |
+| Anyone, at `/` | For now, redirects to `/downloads` (`src/home-redirect.js`; an HTTP 302 in production, see [docs/deployment.md](docs/deployment.md)). The rows above and below are at `/login`, or any other address. |
 | Registration | The form if the server reports registration is open; otherwise a message that it's unavailable, with a way back to sign-in |
 | `ADMIN` | Admin layout: sidebar (Dashboard, Users, Proxy Servers, Data Transfer, Settings), top bar, and the pages below |
 | `USER` | Account page (name, email, "coming soon" note, sign out). No admin navigation. |

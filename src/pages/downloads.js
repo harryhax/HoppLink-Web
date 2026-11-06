@@ -15,7 +15,7 @@ export function renderDownloads({ fetch } = {}) {
           <a class="d-flex align-items-center text-decoration-none" href="/downloads">
             <img class="pm-logo pm-logo-md" src="/brand/hopplink-logo-on-light.png" alt="HoppLink" width="678" height="120">
           </a>
-          <a class="btn btn-outline-secondary btn-sm" href="/">Sign in</a>
+          <a class="btn btn-outline-secondary btn-sm" href="/login">Sign in</a>
         </div>
       </header>
 

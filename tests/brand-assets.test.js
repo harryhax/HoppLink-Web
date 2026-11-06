@@ -181,6 +181,6 @@ describe('the layout around the logo is unchanged', () => {
   });
 
   test('the downloads header still links home to /downloads beside Sign in', () => {
-    assert.match(read('src/pages/downloads.js'), /href="\/downloads">\s*<img class="pm-logo pm-logo-md" [^>]*>\s*<\/a>\s*<a class="btn btn-outline-secondary btn-sm" href="\/">Sign in<\/a>/);
+    assert.match(read('src/pages/downloads.js'), /href="\/downloads">\s*<img class="pm-logo pm-logo-md" [^>]*>\s*<\/a>\s*<a class="btn btn-outline-secondary btn-sm" href="\/login">Sign in<\/a>/);
   });
 });

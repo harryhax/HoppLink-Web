@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Changed
+- **The homepage redirects to the downloads page, for now.** `/` goes to `/downloads`, with a temporary HTTP 302 from
+  Nginx once `deploy/central/nginx-web-locations.conf` is reinstalled, and in the browser until then. Sign-in,
+  registration, the account page and the admin pages now start at `/login`, which the downloads page's **Sign in**
+  links to. Old `/#users`-style admin addresses go there too. Every other address works as before.
+
 ## [0.1.2] - 2026-11-06
 
 ### Changed
