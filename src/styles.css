@@ -3,6 +3,15 @@
   --pm-bg: #f6f7f9;
 }
 
+/*
+ * The hidden attribute always hides. Bootstrap's display utilities (.d-flex and friends) are !important and come after
+ * Reboot's [hidden] rule with the same specificity, so they'd win: an error banner marked "alert d-flex … hidden"
+ * stayed on screen, empty. Two attribute selectors outrank any single utility class, wherever this file is loaded.
+ */
+[class][hidden] {
+  display: none !important;
+}
+
 body {
   background: var(--pm-bg);
   color: #1f2937;

@@ -4,9 +4,11 @@
 
 ### Fixed
 - **Empty error banners.** The red banner with Retry on Dashboard, Data Transfer, Users and Proxy Servers no longer
-  appears without text. A server message that was empty or only whitespace used to be shown as is. Now HoppLink's own
-  wording replaces it, and a failure with nothing else to say reads "Unable to load data. Please try again." The
-  banner's look and Retry are unchanged.
+  appears without text. The main cause was CSS: Bootstrap's `.d-flex` overrode the `hidden` attribute, so the banner
+  was always on screen, empty until an error filled it. `styles.css` now makes `hidden` win over display utilities.
+  Also, a server message that was empty or only whitespace used to be shown as is. Now HoppLink's own wording replaces
+  it, and a failure with nothing else to say reads "Unable to load data. Please try again." The banner's look and
+  Retry are unchanged.
 
 ### Added
 - **Sync to Squid** in Routing Rules: push a server's enabled rules to its Squid allowlist after confirming, with a

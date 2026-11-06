@@ -191,3 +191,36 @@ describe('Retry', () => {
     assert.equal(source.match(/meaningfulMessage\([^)]*\) \?\? FALLBACK_ERROR/g)?.length, 2);
   });
 });
+
+describe('a hidden banner is really hidden', () => {
+  const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
+  const bootstrap = read('../node_modules/bootstrap/dist/css/bootstrap.min.css');
+  const styles = read('../src/styles.css');
+
+  test("the cause: Bootstrap's .d-flex comes after its [hidden] rule, with the same weight, so on its own it wins", () => {
+    const hiddenRule = bootstrap.indexOf('[hidden]{display:none!important}');
+    const flexRule = bootstrap.indexOf('.d-flex{display:flex!important}');
+    assert.ok(hiddenRule >= 0 && flexRule > hiddenRule, 'if this changes, the override below may no longer be needed');
+  });
+
+  test('styles.css makes hidden win over any single display utility, with no other effect', () => {
+    const rule = styles.match(/\[class\]\[hidden\]\s*\{([^}]*)\}/);
+    assert.ok(rule, 'the override is present');
+    assert.equal(rule[1].trim(), 'display: none !important;');
+  });
+
+  test('styles.css is loaded after Bootstrap', () => {
+    const main = read('../src/main.js');
+    assert.ok(main.indexOf("import './styles.css';") > main.indexOf("import 'bootstrap/dist/css/bootstrap.min.css';"));
+  });
+
+  test('every page banner that relies on it starts hidden and uses a display utility the override beats', () => {
+    for (const file of ['dashboard', 'data-transfer', 'users', 'proxy-servers']) {
+      const source = read(`../src/pages/${file}.js`);
+      const [opening] = source.match(/<div class="alert alert-danger[^"]*"[^>]*role="alert">/) ?? [];
+      assert.ok(opening, file);
+      assert.match(opening, / hidden /, `${file}: hidden until there is something to say`);
+      assert.match(opening, /class="[^"]*\bd-flex\b/, `${file}: the look is unchanged`);
+    }
+  });
+});
