@@ -28,11 +28,11 @@ export function renderAdminShell({ user, api, onSignOut, onAuthLost }) {
     <div class="pm-shell">
       <aside class="pm-sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="pm-sidebar" aria-label="Navigation">
         <div class="offcanvas-header border-bottom d-lg-none">
-          <span class="fw-semibold">HoppLink</span>
+          <img class="pm-logo pm-logo-sm" src="/brand/hopplink-logo-on-light.png" alt="HoppLink" width="678" height="120">
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#pm-sidebar" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body d-flex flex-column p-0">
-          <div class="pm-sidebar-brand d-none d-lg-flex"><img src="/favicon.svg" alt="" width="26" height="26"><span>HoppLink</span><span class="badge text-bg-primary-subtle text-primary-emphasis ms-1">Admin</span></div>
+          <div class="pm-sidebar-brand d-none d-lg-flex"><img class="pm-logo pm-logo-sm" src="/brand/hopplink-logo-on-light.png" alt="HoppLink" width="678" height="120"><span class="badge text-bg-primary-subtle text-primary-emphasis ms-1">Admin</span></div>
           <ul class="nav flex-column pm-nav">${navItems()}</ul>
         </div>
       </aside>
@@ -42,7 +42,7 @@ export function renderAdminShell({ user, api, onSignOut, onAuthLost }) {
           <button class="btn btn-sm btn-light border d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#pm-sidebar" aria-controls="pm-sidebar" aria-label="Open navigation">
             <i class="bi bi-list"></i>
           </button>
-          <span class="navbar-brand d-lg-none fw-semibold me-auto">HoppLink</span>
+          <span class="navbar-brand d-lg-none me-auto py-0"><img class="pm-logo pm-logo-sm" src="/brand/hopplink-logo-on-light.png" alt="HoppLink" width="678" height="120"></span>
           <div class="ms-auto d-flex align-items-center gap-3">
             <span class="small text-body-secondary d-none d-sm-inline"><i class="bi bi-person-circle me-1"></i><span data-who></span></span>
             <button class="btn btn-sm btn-outline-secondary" data-signout><i class="bi bi-box-arrow-right me-1"></i>Sign out</button>

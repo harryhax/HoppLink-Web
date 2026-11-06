@@ -172,6 +172,25 @@ describe('download file names and links', () => {
       assert.equal(served.test(name), false, name);
     }
   });
+
+  test('a new release needs only a new manifest: 0.1.2, with the names HoppLink-Apps packaging produces', () => {
+    const nginx = read('../deploy/central/nginx-web-locations.conf');
+    const served = new RegExp(`^${nginx.match(/location ~ "\^\/downloads\/releases\/\(([^"]+)\)\$"/)[1]}$`);
+    const files = { 'windows-x64': 'HoppLink-0.1.2-win-x64.zip', 'macos-arm64': 'HoppLink-0.1.2-osx-arm64.zip', 'macos-x64': 'HoppLink-0.1.2-osx-x64.zip' };
+    const result = parseManifest({
+      version: '0.1.2',
+      releaseDate: '2026-11-06',
+      downloads: Object.fromEntries(Object.entries(files).map(([key, file]) => [key, { file, size: 45022539, sha256: SHA }])),
+    });
+    assert.equal(result.state, 'ready');
+    assert.equal(result.version, '0.1.2');
+    assert.deepEqual(result.downloads.map((d) => [d.key, d.version, d.url]),
+      Object.entries(files).map(([key, file]) => [key, '0.1.2', `/downloads/releases/${file}`]));
+    for (const file of Object.values(files)) assert.ok(served.test(file), `${file} is served by Nginx`);
+    for (const file of ['src/downloads.js', 'src/pages/downloads.js']) {
+      assert.doesNotMatch(read(`../${file}`), /\b0\.\d+\.\d+\b|HoppLink-\d/, `${file} has no release version written into it`);
+    }
+  });
 });
 
 describe('versions, dates and sizes', () => {
@@ -266,7 +285,7 @@ describe('the page', () => {
   const source = read('../src/pages/downloads.js');
 
   test('has the HoppLink branding, a beta notice, "coming soon", an error banner with Retry, and no upload', () => {
-    assert.match(source, /<img src="\/favicon\.svg" alt="" width="28" height="28">\s*<span class="fs-5 fw-semibold">HoppLink<\/span>/);
+    assert.match(source, /<a class="d-flex align-items-center text-decoration-none" href="\/downloads">\s*<img class="pm-logo pm-logo-md" src="\/brand\/hopplink-logo-on-light\.png" alt="HoppLink" width="678" height="120">/);
     assert.match(source, /Download HoppLink/);
     assert.match(source, />Beta</);
     assert.match(source, /HoppLink is beta software\./);

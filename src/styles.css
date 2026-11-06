@@ -27,6 +27,21 @@ body {
 
 .pm-status-icon { font-size: 2.5rem; }
 
+/*
+ * The official logo (public/brand/), for light backgrounds: the site has no dark theme. Sized by height only, so it
+ * keeps its proportions, and never stretched if its container is narrower than it.
+ */
+.pm-logo {
+  display: block;
+  width: auto;
+  height: 2rem;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+.pm-logo-md { height: 1.75rem; }
+.pm-logo-sm { height: 1.5rem; }
+
 /* Admin shell */
 .pm-shell { display: flex; min-height: 100vh; }
 .pm-main { flex: 1; min-width: 0; }

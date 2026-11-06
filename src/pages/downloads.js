@@ -12,9 +12,8 @@ export function renderDownloads({ fetch } = {}) {
     <div class="pm-downloads">
       <header class="bg-white border-bottom">
         <div class="container pm-downloads-container d-flex align-items-center justify-content-between py-3">
-          <a class="d-flex align-items-center gap-2 text-decoration-none text-body" href="/downloads">
-            <img src="/favicon.svg" alt="" width="28" height="28">
-            <span class="fs-5 fw-semibold">HoppLink</span>
+          <a class="d-flex align-items-center text-decoration-none" href="/downloads">
+            <img class="pm-logo pm-logo-md" src="/brand/hopplink-logo-on-light.png" alt="HoppLink" width="678" height="120">
           </a>
           <a class="btn btn-outline-secondary btn-sm" href="/">Sign in</a>
         </div>

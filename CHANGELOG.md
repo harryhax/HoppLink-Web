@@ -2,11 +2,22 @@
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-06
+
+### Changed
+- **Official HoppLink branding.** The sign-in, registration, account, admin and downloads pages show the HoppLink logo
+  where the placeholder globe and the "HoppLink" text were. The site is light only, so it uses the logo for light
+  backgrounds. The favicon is now the HoppLink link mark: `favicon.ico` (16, 32 and 48 pixels), a 192-pixel PNG, and
+  a 180-pixel Apple touch icon. `favicon.svg` is gone. The files are in `public/`, built from the official artwork by
+  HoppLink-Apps' `tools/generate_brand_assets.py --web-public`.
+
 ### Fixed
 - **Empty error banners.** The red banner with Retry on Dashboard, Data Transfer, Users and Proxy Servers no longer
-  appears without text. A server message that was empty or only whitespace used to be shown as is. Now HoppLink's own
-  wording replaces it, and a failure with nothing else to say reads "Unable to load data. Please try again." The
-  banner's look and Retry are unchanged.
+  appears without text. The main cause was CSS: Bootstrap's `.d-flex` overrode the `hidden` attribute, so the banner
+  was always on screen, empty until an error filled it. `styles.css` now makes `hidden` win over display utilities.
+  Also, a server message that was empty or only whitespace used to be shown as is. Now HoppLink's own wording replaces
+  it, and a failure with nothing else to say reads "Unable to load data. Please try again." The banner's look and
+  Retry are unchanged.
 
 ### Added
 - **Public downloads page** at `/downloads`, with no sign-in. It lists the Windows (x64) and macOS (Apple Silicon and

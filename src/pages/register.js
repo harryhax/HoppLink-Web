@@ -10,9 +10,8 @@ export function renderRegister({ api, onRegister, onBack }) {
     <main class="pm-center pm-auth-bg">
       <div class="card pm-auth-card shadow-sm">
         <div class="card-body p-4 p-sm-5">
-          <div class="d-flex align-items-center gap-2 mb-4">
-            <img src="/favicon.svg" alt="" width="32" height="32">
-            <span class="fs-4 fw-semibold">HoppLink</span>
+          <div class="mb-4">
+            <img class="pm-logo" src="/brand/hopplink-logo-on-light.png" alt="HoppLink" width="678" height="120">
           </div>
           <h1 class="h5 mb-3">Create an account</h1>
           <div data-alert hidden role="alert"></div>
