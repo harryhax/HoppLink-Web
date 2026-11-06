@@ -107,6 +107,16 @@ export function isHoppLinkServerHealth(data) {
 }
 
 /** A short, user-facing explanation for a failed ApiResult. */
+/** A message worth showing, trimmed. Null for null, undefined, anything but a string, and empty or whitespace-only text. */
+export function meaningfulMessage(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed === '' ? null : trimmed;
+}
+
+/** What a failed load says when nothing more specific can be shown. */
+export const FALLBACK_ERROR = 'Unable to load data. Please try again.';
+
 export function describeError(result) {
   if (result.kind === 'network') {
     return result.code === 'TIMEOUT'
@@ -137,8 +147,7 @@ export function describeError(result) {
     default:
       if (result.status === 429) return 'Too many attempts. Wait a few seconds and try again.';
       if (result.status >= 500) return `HoppLink Server had a problem (HTTP ${result.status}). Try again later.`;
-      // Other refusals: show the server's own (safe, user-facing) message when it gives one.
-      if (typeof (result.data?.message ?? result.data?.error?.message) === 'string') return result.data.message ?? result.data.error.message;
-      return `The request failed (HTTP ${result.status}).`;
+      // Other refusals: show the server's own (safe, user-facing) message when it gives one that isn't blank.
+      return meaningfulMessage(result.data?.message) ?? meaningfulMessage(result.data?.error?.message) ?? `The request failed (HTTP ${result.status}).`;
   }
 }

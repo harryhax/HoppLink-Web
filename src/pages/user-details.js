@@ -1,4 +1,4 @@
-import { describeError } from '../api.js';
+import { describeError, FALLBACK_ERROR, meaningfulMessage } from '../api.js';
 import { confirmDialog, html, showAlert, text } from '../dom.js';
 import { transferHash } from '../router.js';
 import {
@@ -35,7 +35,7 @@ export function renderUserDetails({ user: me, api, onAuthLost, id, confirm = con
         <i class="bi bi-exclamation-triangle" aria-hidden="true"></i><span class="me-auto" data-text></span>
         <button class="btn btn-sm btn-outline-danger" data-retry>Retry</button>
       </div>`));
-    text(body, '[data-text]', message);
+    text(body, '[data-text]', meaningfulMessage(message) ?? FALLBACK_ERROR); // a failure is never shown blank
     body.querySelector('[data-retry]').addEventListener('click', load);
   }
 
@@ -191,7 +191,7 @@ export function renderUserDetails({ user: me, api, onAuthLost, id, confirm = con
           <button class="btn btn-sm btn-outline-danger" data-retry>Retry</button>
         </div>`);
       text(failure, '[data-text]', result.state === 'missing' ? 'This user no longer exists.'
-        : result.state === 'auth' ? 'The server refused access to usage figures for your session.' : result.message);
+        : result.state === 'auth' ? 'The server refused access to usage figures for your session.' : meaningfulMessage(result.message) ?? FALLBACK_ERROR);
       failure.querySelector('[data-retry]').addEventListener('click', () => loadUsage(box, userId));
       box.replaceChildren(failure);
       return;

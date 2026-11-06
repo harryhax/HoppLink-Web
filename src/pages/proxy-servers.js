@@ -1,5 +1,5 @@
 import { describeError } from '../api.js';
-import { confirmDialog, html, showAlert, text } from '../dom.js';
+import { confirmDialog, html, setErrorBanner, showAlert, text } from '../dom.js';
 import { createProxyAdmin } from '../proxy-admin.js';
 import { isAuthLoss } from '../user-admin.js';
 import { createRoutingPanel } from './routing-rules.js';
@@ -50,22 +50,20 @@ export function renderProxyServers({ api, onAuthLost, confirm = confirmDialog })
 
   async function load() {
     const request = ++latest;
-    errorBox.hidden = true;
+    setErrorBanner(errorBox, null);
     placeholder('<span class="spinner-border spinner-border-sm me-2"></span>Loading…');
     const result = await api.listProxyServers();
     if (request !== latest || !page.isConnected) return;
     if (!result.ok) {
       if (isAuthLoss(result) && (await onAuthLost?.())) return;
       rows.replaceChildren();
-      text(page, '[data-error-text]', describeError(result));
-      errorBox.hidden = false;
+      setErrorBanner(errorBox, describeError(result), { failed: true });
       return;
     }
     const servers = result.data?.servers;
     if (!Array.isArray(servers)) {
       rows.replaceChildren();
-      text(page, '[data-error-text]', 'The server returned unexpected data.');
-      errorBox.hidden = false;
+      setErrorBanner(errorBox, 'The server returned unexpected data.', { failed: true });
       return;
     }
     if (servers.length === 0) {
