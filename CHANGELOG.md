@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 ### Added
+- **Sync to Squid** in Routing Rules: push a server's enabled rules to its Squid allowlist after confirming, with a
+  stronger warning for an empty list, and see Synced, Pending or Failed as confirmed by the node. PAC routing is unchanged.
+  Needs a HoppLink Server with the domain sync endpoints.
+- **Routing Rules** on the Proxy Servers page: list, add, edit, enable, disable and delete a server's routing domains,
+  copy them from another server, and view a read-only PAC preview. PAC routing doesn't use these rules yet. Needs
+  a HoppLink Server with the routing domain and PAC preview endpoints.
 - **Public registration** (Step 26). A new Settings page lets administrators turn public registration on or
   off, showing only states the server has confirmed. The sign-in page links to a registration screen, which
   shows the form only while the server reports registration is open. Needs HoppLink Server from the same step.

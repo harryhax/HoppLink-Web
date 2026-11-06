@@ -106,9 +106,24 @@ All data comes from HoppLink Server's API; the browser never touches the databas
   form stays open with your values and shows its message. Save can't be sent twice.
 - **Disable:** asks for confirmation first, because users can't select a disabled server.
   Enabling needs no confirmation.
-- **Delete:** asks for confirmation, naming the server. Any server can be deleted.
-- **Records only:** this manages HoppLink's records. It never stops, reconfigures or deletes an
-  actual proxy, Squid or any other infrastructure.
+- **Delete:** asks for confirmation, naming the server. Any server can be deleted, and its routing rules go with it.
+- **Routing Rules:** **Routing Rules** on a server's row opens that server's own rules below the list:
+  - **Table:** domain, an Enabled switch that saves straight away and goes back if the server refuses, and Edit
+    and Delete. Delete asks for confirmation, naming the domain.
+  - **Add / Edit:** an exact hostname or a wildcard such as `*.example.com`, which matches subdomains only. The form
+    catches obvious mistakes, and the server has the final say.
+  - **Copy From Server:** choose another server, then confirm a summary with both names and the number of rules,
+    including disabled ones. It replaces all of this server's rules, warns if that leaves it empty, and leaves the
+    source alone.
+  - **View PAC Preview:** a read-only script fetched from the server each time it's opened.
+  - **Sync to Squid:** asks for confirmation, then pushes this server's enabled rules to its Squid allowlist. Anything
+    not on the list is refused. With no enabled rules, a stronger warning says that all traffic through the server will stop.
+  - **Status:** **Synced** means the node has just confirmed the current rules are applied, **Pending** means they haven't
+    been confirmed, and **Failed** means the last attempt failed, with the reason. It's checked when the section
+    opens, after a change and on **Check Status**, and an unreachable node is shown as such.
+  - **PAC not affected:** clients keep the fixed PAC rules, so the preview isn't active.
+- **Records only, apart from Sync to Squid:** everything else manages HoppLink's records. Nothing here stops,
+  reconfigures or deletes an actual proxy or any other infrastructure.
 
 ### Settings
 
@@ -179,6 +194,9 @@ They use the Node.js test runner with a fake `fetch`, so no browser or server is
 - the user administration API calls, account actions and routes (`tests/admin-users.test.js`);
 - proxy server API calls, form checks and actions, and that the removed assignment API and route
   are gone (`tests/proxy-servers.test.js`);
+- routing rules: API calls, the hostname checks, add, edit, toggle, delete, copy, preview, synchronization and its status, and that answers for a
+  previously selected server are dropped (`tests/routing-rules.test.js`). With no DOM here too, the page itself is
+  only checked statically;
 - public registration: API calls, the admin control's loading, saving and failure handling, and which
   registration screen appears (`tests/registration.test.js`). The tests have no DOM, so they cover this
   logic and check the page sources statically, but don't render the pages;
