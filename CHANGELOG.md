@@ -9,6 +9,12 @@
   banner's look and Retry are unchanged.
 
 ### Added
+- **Public downloads page** at `/downloads`, with no sign-in. It lists the Windows (x64) and macOS (Apple Silicon and
+  Intel) builds of the desktop app from a release manifest, with version, release date, size, checksum and release
+  notes, plus a beta notice, or "Downloads coming soon" when nothing is published. The manifest is validated as
+  untrusted input, and links always stay in `/downloads/releases/`. Builds are uploaded by hand to
+  `/srv/hopplink-downloads` on the server, which deployments never touch, and need the new Nginx locations in
+  `deploy/central/nginx-web-locations.conf` (see `docs/deployment.md`).
 - **Sync to Squid** in Routing Rules: push a server's enabled rules to its Squid allowlist after confirming, with a
   stronger warning for an empty list, and see Synced, Pending or Failed as confirmed by the node. PAC routing is unchanged.
   Needs a HoppLink Server with the domain sync endpoints.

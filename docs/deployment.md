@@ -150,6 +150,111 @@ It's installed outside the checkout because SSM runs it as root, and root must n
 can edit. **Reinstall it the same way whenever `deploy-web.sh` changes.** Deployments print a warning if the
 installed copy differs from the commit being built.
 
+## Desktop app downloads
+
+The public page at `/downloads` lists the desktop app builds described by a release manifest. The page is part of
+the frontend, so every deployment updates it. The builds and the manifest are uploaded by hand over SSH, never
+through Git, GitHub Actions or the website, and live in their own directory:
+
+```text
+/srv/hopplink-downloads/                 builds and manifest.json, root-owned; served at /downloads/releases/
+```
+
+It's outside `/var/www/hopplink` and `/var/www/hopplink-releases`, which deployments replace and prune, and outside
+the checkout in `/opt/hopplink/web`, so a deployment never changes or deletes an upload. `deploy-web.sh` doesn't
+refer to it.
+
+### One-time setup
+
+Create the directory. It must be a real directory, not a symlink, because Nginx refuses to follow symlinks there:
+
+```bash
+sudo install -d -o root -g root -m 0755 /srv/hopplink-downloads
+```
+
+Then install the updated [deploy/central/nginx-web-locations.conf](../deploy/central/nginx-web-locations.conf) in the
+website's HTTPS `server` block as described under [Nginx](#nginx), and test and reload. It adds three locations:
+
+- `= /downloads/releases/manifest.json`: the manifest, as JSON, never cached;
+- a regex location for builds: only one plain file name ending in `.zip`, `.dmg`, `.pkg`, `.msi` or `.exe`. It
+  starts with a letter or digit and has no slash, so there's no subdirectory, `..` or hidden file. Each build is
+  sent as an attachment of type `application/octet-stream`;
+- `/downloads/releases/`: everything else there is a 404, so there's no directory listing and never the page fallback.
+
+All three allow only `GET` and `HEAD` and refuse symlinks. Nginx only sends these files: nothing there is run, and
+visitors can't upload anything. The locations belong in the HTTPS server block only, so downloads are served over
+HTTPS like the site. If the server block has other regex locations that could match these extensions, put the build
+location before them. Until the locations are installed, `/downloads` shows "Downloads coming soon".
+
+### Publishing a release
+
+Build names should include the version, for example `HoppLink-0.1.0-win-x64.zip`, and a name should never be reused
+for different content, because builds may be cached for an hour.
+
+1. Copy the builds to your home directory on the server:
+
+   ```bash
+   scp HoppLink-0.1.0-win-x64.zip HoppLink-0.1.0-osx-arm64.zip HoppLink-0.1.0-osx-x64.zip <user>@<central-host>:~/
+   ```
+
+2. On the server, install each build root-owned and read-only, then note its size and checksum for the manifest:
+
+   ```bash
+   sudo install -o root -g root -m 0644 ~/HoppLink-0.1.0-win-x64.zip /srv/hopplink-downloads/
+   stat -c '%s %n' /srv/hopplink-downloads/HoppLink-0.1.0-*.zip
+   sha256sum /srv/hopplink-downloads/HoppLink-0.1.0-*.zip
+   ```
+
+3. Write `manifest.json` in your home directory, check that it's valid JSON, and install it **last**, through a
+   temporary name and an atomic rename, so the page never lists a build that isn't there yet:
+
+   ```bash
+   python3 -m json.tool ~/manifest.json > /dev/null
+   sudo install -o root -g root -m 0644 ~/manifest.json /srv/hopplink-downloads/.manifest.json.new
+   sudo mv -T /srv/hopplink-downloads/.manifest.json.new /srv/hopplink-downloads/manifest.json
+   ```
+
+4. Check from outside:
+
+   ```bash
+   curl -fsS https://www.example.com/downloads/releases/manifest.json
+   curl -fsSI https://www.example.com/downloads/releases/HoppLink-0.1.0-win-x64.zip
+   ```
+
+Remove old builds only after a manifest that no longer lists them is live. To withdraw every download, remove
+`manifest.json`, and the page shows "Downloads coming soon" again.
+
+### The manifest
+
+```json
+{
+  "version": "0.1.0",
+  "releaseDate": "2026-11-05",
+  "notes": ["First public beta."],
+  "downloads": {
+    "windows-x64": { "file": "HoppLink-0.1.0-win-x64.zip", "size": 84213760, "sha256": "<64 hex characters>" },
+    "macos-arm64": { "file": "HoppLink-0.1.0-osx-arm64.zip" },
+    "macos-x64": { "file": "HoppLink-0.1.0-osx-x64.zip" }
+  }
+}
+```
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `version` | yes, unless every build has its own | `1.2.3` or `1.2.3-beta.1` |
+| `releaseDate` | no | `YYYY-MM-DD`, shown in UTC |
+| `notes` | no | release notes: a string or up to 10 strings, shown as plain text |
+| `downloads` | yes | builds by platform: `windows-x64`, `macos-arm64` (Apple Silicon) and `macos-x64` (Intel) |
+| `downloads.*.file` | yes | the build's file name in `/srv/hopplink-downloads`, as allowed by the Nginx location above |
+| `downloads.*.size` | no | size in bytes, shown on the page |
+| `downloads.*.sha256` | no | SHA-256 checksum, shown on the page |
+| `downloads.*.version`, `releaseDate` | no | overrides the release's, for a platform rebuilt on its own |
+
+The page treats the manifest as untrusted. Only the platforms above are offered, and only when they have a valid
+file name and version. Anything invalid is left out, and with nothing left the page shows "Downloads coming soon".
+Links are always `/downloads/releases/<file>` on the same site: any URL in the manifest is ignored. Everything else
+is shown as text, never as HTML.
+
 ## Troubleshooting
 
 **GitHub Actions:** open the repository's **Actions** tab, then **Deploy Web**, then the run.

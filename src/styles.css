@@ -106,3 +106,8 @@ body {
 .pm-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.35rem; vertical-align: -1px; }
 .pm-swatch-down { background: #1d4ed8; }
 .pm-swatch-up { background: #f59e0b; }
+
+/* Public downloads page */
+.pm-downloads { min-height: 100vh; }
+.pm-downloads-container { max-width: 960px; }
+.pm-downloads-empty-icon { font-size: 2.5rem; }
