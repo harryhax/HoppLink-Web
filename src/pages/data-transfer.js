@@ -1,4 +1,4 @@
-import { html, text } from '../dom.js';
+import { html, setErrorBanner, text } from '../dom.js';
 import { transferHash, userHash } from '../router.js';
 import {
   PERIODS, TERMS, barLabel, describePeriod, formatAverage, formatBytes, formatCount, formatDateTime, formatDay,
@@ -282,7 +282,7 @@ export function renderDataTransfer({ api, onAuthLost, route }) {
   async function load() {
     const request = ++latest;
     setLoading(true);
-    errorBox.hidden = true;
+    setErrorBanner(errorBox, null);
     const result = await loadOverview(api, { period: route.period, page: route.page });
     if (request !== latest || !page.isConnected) return;
     setLoading(false);
@@ -291,10 +291,9 @@ export function renderDataTransfer({ api, onAuthLost, route }) {
       // Never leave stale or partial figures on screen.
       report.hidden = true;
       if (result.state === 'auth' && (await onAuthLost?.())) return;
-      text(page, '[data-error-text]', result.state === 'auth'
+      setErrorBanner(errorBox, result.state === 'auth'
         ? 'The server refused access to the data transfer report. Sign out and sign in again if this continues.'
-        : result.message);
-      errorBox.hidden = false;
+        : result.message, { failed: true });
       return;
     }
 

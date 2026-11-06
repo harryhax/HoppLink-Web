@@ -1,5 +1,5 @@
 import { describeError } from '../api.js';
-import { html, text } from '../dom.js';
+import { html, setErrorBanner, text } from '../dom.js';
 import { userHash, usersHash } from '../router.js';
 import { isAuthLoss } from '../user-admin.js';
 
@@ -61,7 +61,7 @@ export function renderUsers({ api, onAuthLost, route: initialRoute }) {
 
   async function load() {
     const request = ++latest;
-    errorBox.hidden = true;
+    setErrorBanner(errorBox, null);
     prev.disabled = next.disabled = true;
     message('<span class="spinner-border spinner-border-sm me-2"></span>Loading…');
     const result = await api.listUsers({ search: route.search, page: route.page, pageSize: PAGE_SIZE });
@@ -70,8 +70,7 @@ export function renderUsers({ api, onAuthLost, route: initialRoute }) {
     if (!result.ok) {
       if (isAuthLoss(result) && (await onAuthLost?.())) return;
       rows.replaceChildren();
-      text(page, '[data-error-text]', describeError(result));
-      errorBox.hidden = false;
+      setErrorBanner(errorBox, describeError(result), { failed: true });
       text(page, '[data-summary]', '');
       text(page, '[data-page-label]', '');
       return;

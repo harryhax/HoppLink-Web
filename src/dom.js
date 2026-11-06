@@ -1,3 +1,5 @@
+import { FALLBACK_ERROR, meaningfulMessage } from './api.js';
+
 /** Parses trusted, static markup. Never pass user or server data here; use text() for that. */
 export function html(markup) {
   const template = document.createElement('template');
@@ -14,9 +16,23 @@ export function text(root, selector, value) {
 export function showAlert(root, message, tone = 'danger') {
   const box = root.querySelector('[data-alert]');
   if (!box) return;
+  const shown = meaningfulMessage(message);
   box.className = `alert alert-${tone} py-2 small mb-3`;
-  box.textContent = message ?? '';
-  box.hidden = !message;
+  box.textContent = shown ?? '';
+  box.hidden = shown === null; // hidden takes no space: Bootstrap's [hidden] is display: none !important
+}
+
+/**
+ * Shows or hides a page's error banner: the red alert with a warning icon, its [data-error-text] and Retry. Only a
+ * meaningful message is shown, so there's never an empty banner. With `failed`, a request really failed, and a missing
+ * message becomes FALLBACK_ERROR instead of hiding the failure. Returns the text shown, or null when hidden.
+ */
+export function setErrorBanner(box, message, { failed = false } = {}) {
+  const shown = meaningfulMessage(message) ?? (failed ? FALLBACK_ERROR : null);
+  const textElement = box.querySelector('[data-error-text]');
+  if (textElement) textElement.textContent = shown ?? '';
+  box.hidden = shown === null;
+  return shown;
 }
 
 /**

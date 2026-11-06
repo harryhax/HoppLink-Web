@@ -1,5 +1,5 @@
 import { isHoppLinkServerHealth } from '../api.js';
-import { html, text } from '../dom.js';
+import { html, setErrorBanner, text } from '../dom.js';
 import { createStatsLoader } from '../stats.js';
 
 const CARDS = [
@@ -43,7 +43,7 @@ export function renderDashboardContent({ user, api, onAuthLost }) {
 
           <div class="alert alert-danger d-flex align-items-center gap-2" data-stats-error hidden role="alert">
             <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-            <span class="me-auto" data-stats-error-text></span>
+            <span class="me-auto" data-error-text></span>
             <button class="btn btn-sm btn-outline-danger" data-retry>Retry</button>
           </div>
 
@@ -168,7 +168,7 @@ export function renderDashboardContent({ user, api, onAuthLost }) {
 
   async function loadStats() {
     setLoading(true);
-    errorBox.hidden = true;
+    setErrorBanner(errorBox, null);
     const result = await loader.load();
     setLoading(false);
     if (result.state === 'ready') {
@@ -180,14 +180,12 @@ export function renderDashboardContent({ user, api, onAuthLost }) {
       statsBox.hidden = true;
       const handled = await onAuthLost?.();
       if (!handled) {
-        text(page, '[data-stats-error-text]', 'The server refused access to the dashboard statistics. Sign out and sign in again if this continues.');
-        errorBox.hidden = false;
+        setErrorBanner(errorBox, 'The server refused access to the dashboard statistics. Sign out and sign in again if this continues.', { failed: true });
       }
     } else {
       // Keep whatever was shown out of view rather than presenting stale or zeroed figures.
       statsBox.hidden = true;
-      text(page, '[data-stats-error-text]', result.message);
-      errorBox.hidden = false;
+      setErrorBanner(errorBox, result.message, { failed: true });
     }
   }
 
