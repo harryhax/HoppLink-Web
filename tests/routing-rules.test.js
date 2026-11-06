@@ -6,7 +6,8 @@ import { describe, test } from 'node:test';
 import { createApi, describeError } from '../src/api.js';
 import { createRoutingRules, describeSync, isKeyboardActivation, PREVIEW_NOTICE, PREVIEW_NOTICE_TITLE, PREVIEW_SQUID_NOTE, switchToRefocus, validateDomain } from '../src/routing-rules.js';
 
-const json = (status, body) => new Response(body === undefined ? '' : JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+// No body at all when none is given: Node 24's Response refuses even an empty string with a 204.
+const json = (status, body) => new Response(body === undefined ? null : JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 const failure = (status, code, message = code) => json(status, { error: { code, message } });
 
 const A = { id: 'server-a', name: 'Sweden', host: 'a.example.com', port: 3128, enabled: true };
