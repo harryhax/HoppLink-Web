@@ -135,3 +135,21 @@ body {
 .pm-downloads { min-height: 100vh; }
 .pm-downloads-container { max-width: 960px; }
 .pm-downloads-empty-icon { font-size: 2.5rem; }
+
+/* Supported trading platforms: each logo in its own colours and proportions, the same height, on a white tile. */
+.pm-platform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 5rem;
+  padding: 0 1rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.85rem;
+}
+.pm-platform-logo {
+  height: 1.75rem;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}

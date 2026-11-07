@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+- **Supported Trading Platforms** on the downloads page: the logos of Polymarket, Binance, BingX, Bybit, HTX, Kalshi,
+  OKX and Pionex, in their own colours and proportions, two to a row on phones and four on wider screens. A note says
+  each platform's own terms and regional restrictions still apply, and that HoppLink is independent and not affiliated
+  with or endorsed by them. The logos are stored in `public/brands/`; their sources are in
+  `docs/trading-platform-logos.md`.
+
 ### Changed
 - **The homepage redirects to the downloads page, for now.** `/` goes to `/downloads`, with a temporary HTTP 302 from
   Nginx once `deploy/central/nginx-web-locations.conf` is reinstalled, and in the browser until then. Sign-in,
