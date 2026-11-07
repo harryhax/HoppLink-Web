@@ -135,3 +135,7 @@ body {
 .pm-downloads { min-height: 100vh; }
 .pm-downloads-container { max-width: 960px; }
 .pm-downloads-empty-icon { font-size: 2.5rem; }
+
+/* Discord's official symbol (public/community/), sized by height so it keeps its proportions and colour. */
+.pm-discord-icon { display: block; height: 1rem; width: auto; }
+.pm-community-icon { display: block; height: 2.5rem; width: auto; max-width: 100%; flex-shrink: 0; }
