@@ -180,7 +180,7 @@ describe('the layout around the logo is unchanged', () => {
     }
   });
 
-  test('the downloads header still links home to /downloads beside Sign in', () => {
-    assert.match(read('src/pages/downloads.js'), /href="\/downloads">\s*<img class="pm-logo pm-logo-md" [^>]*>\s*<\/a>\s*<a class="btn btn-outline-secondary btn-sm" href="\/login">Sign in<\/a>/);
+  test('the downloads header still links home to /downloads, with Join Discord and Sign in on the right', () => {
+    assert.match(read('src/pages/downloads.js'), /href="\/downloads">\s*<img class="pm-logo pm-logo-md" [^>]*>\s*<\/a>\s*<div class="d-flex align-items-center gap-2">\s*<a [^>]*data-discord-link>[\s\S]*?<\/a>\s*<a class="btn btn-outline-secondary btn-sm" href="\/login">Sign in<\/a>\s*<\/div>/);
   });
 });

@@ -8,6 +8,10 @@
   each platform's own terms and regional restrictions still apply, and that HoppLink is independent and not affiliated
   with or endorsed by them. The logos are stored in `public/brands/`; their sources are in
   `docs/trading-platform-logos.md`.
+- **Join Discord.** The downloads page's header has a **Join Discord** link with Discord's icon. Below the downloads,
+  a **Join the HoppLink Community** card invites visitors to the HoppLink Discord server. Both open
+  https://discord.gg/AmyFRbT8ee in a new tab. The invitation is defined once, in `src/community.js`, and the icon is
+  Discord's official symbol, stored in `public/community/`.
 
 ### Changed
 - **The homepage redirects to the downloads page, for now.** `/` goes to `/downloads`, with a temporary HTTP 302 from

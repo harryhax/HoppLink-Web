@@ -1,5 +1,6 @@
 import { formatDate, formatSize, loadDownloads } from '../downloads.js';
 import { html, setErrorBanner, text } from '../dom.js';
+import { DISCORD_INVITE_URL } from '../community.js';
 
 /**
  * The public downloads page at /downloads. No sign-in: it never calls the API, only fetches the release manifest.
@@ -15,7 +16,13 @@ export function renderDownloads({ fetch } = {}) {
           <a class="d-flex align-items-center text-decoration-none" href="/downloads">
             <img class="pm-logo pm-logo-md" src="/brand/hopplink-logo-on-light.png" alt="HoppLink" width="678" height="120">
           </a>
-          <a class="btn btn-outline-secondary btn-sm" href="/login">Sign in</a>
+          <div class="d-flex align-items-center gap-2">
+            <a class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2" href="${DISCORD_INVITE_URL}" target="_blank" rel="noopener noreferrer" aria-label="Join Discord (opens in a new tab)" data-discord-link>
+              <img class="pm-discord-icon" src="/community/discord-symbol.svg" alt="" width="127" height="96">
+              <span class="d-none d-sm-inline">Join Discord</span>
+            </a>
+            <a class="btn btn-outline-secondary btn-sm" href="/login">Sign in</a>
+          </div>
         </div>
       </header>
 
@@ -74,6 +81,17 @@ export function renderDownloads({ fetch } = {}) {
             </div>
           </section>
         </div>
+
+        <section class="card shadow-sm mt-5" aria-labelledby="pm-community-title" data-community>
+          <div class="card-body p-4 d-flex flex-column flex-sm-row align-items-center gap-3 text-center text-sm-start">
+            <img class="pm-community-icon" src="/community/discord-symbol.svg" alt="Discord" width="127" height="96" loading="lazy" decoding="async">
+            <div class="flex-grow-1">
+              <h2 class="h5 fw-semibold mb-1" id="pm-community-title">Join the HoppLink Community</h2>
+              <p class="text-body-secondary mb-0">Ask questions, get help and hear about new releases on the HoppLink Discord server.</p>
+            </div>
+            <a class="btn btn-primary text-nowrap" href="${DISCORD_INVITE_URL}" target="_blank" rel="noopener noreferrer" data-discord-link>Join Discord</a>
+          </div>
+        </section>
 
         <p class="small text-body-secondary text-center mt-5 mb-0">
           <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
