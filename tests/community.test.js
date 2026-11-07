@@ -60,10 +60,11 @@ describe('the downloads page', () => {
     }
   });
 
-  test('keeps Sign in, and the community section sits below the downloads', () => {
+  test('keeps Sign in, and the community section sits above the Download HoppLink section', () => {
     assert.match(page, /<a class="btn btn-outline-secondary btn-sm" href="\/login">Sign in<\/a>/);
-    assert.ok(page.indexOf('data-ready') < page.indexOf('data-community'));
-    assert.ok(page.indexOf('data-community') < page.indexOf('HoppLink is beta software.'));
+    assert.ok(page.indexOf('data-community') < page.indexOf('<h1 class="h2 fw-semibold mb-2">Download HoppLink</h1>'));
+    assert.ok(page.indexOf('data-community') < page.indexOf('data-ready'));
+    assert.ok(page.indexOf('data-platforms') < page.indexOf('data-community'), 'below Supported Trading Platforms');
   });
 
   test('stays usable on phones: the header keeps the icon, and the section stacks', () => {
