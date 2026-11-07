@@ -8,6 +8,7 @@ import {
   downloadUrl, formatDate, formatSize, isDownloadsPath, loadDownloads, MANIFEST_URL, MAX_MANIFEST_LENGTH, parseManifest,
   PLATFORMS, validDate, validFileName, validVersion,
 } from '../src/downloads.js';
+import { DISCORD_INVITE_URL } from '../src/community.js';
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const SHA = 'ab'.repeat(32);
@@ -304,7 +305,24 @@ describe('the page', () => {
 
   test('manifest values go in as text, and links only come from the validated build', () => {
     assert.doesNotMatch(source, /innerHTML|insertAdjacentHTML|outerHTML|document\.write/);
-    assert.doesNotMatch(source, /html\(`[^`]*\$\{/, 'no values are interpolated into markup');
+    // Markup may only interpolate trusted application constants, never anything from the manifest. The one allowed is
+    // the Discord invitation from src/community.js: a fixed https URL with nothing that could break out of an attribute.
+    const TRUSTED = ['DISCORD_INVITE_URL'];
+    const templates = [...source.matchAll(/html\(`([^`]*)`\)/g)].map(([, markup]) => markup);
+    assert.ok(templates.length >= 2, 'the page and its download card are built from markup');
+    for (const [, expression] of templates.flatMap((markup) => [...markup.matchAll(/\$\{([^}]*)\}/g)])) {
+      assert.ok(TRUSTED.includes(expression.trim()), `only trusted constants are interpolated into markup, not \${${expression}}`);
+    }
+    assert.match(source, /import \{ DISCORD_INVITE_URL \} from '\.\.\/community\.js';/);
+    assert.match(DISCORD_INVITE_URL, /^https:\/\/discord\.gg\/[A-Za-z0-9]+$/);
+
+    // Every manifest value goes in as text, or as the validated download link.
+    for (const insertion of [
+      "text(page, '[data-summary]', parts.filter(Boolean).join(', '))", 'item.textContent = note;',
+      "text(card, '[data-os]', build.os)", "text(card, '[data-arch]', build.arch)", "text(card, '[data-version]', build.version)",
+      "text(card, '[data-date]', date)", "text(card, '[data-size]', size)", "text(card, '[data-checksum]', build.sha256)",
+      "link.setAttribute('download', build.file)",
+    ]) assert.ok(source.includes(insertion), insertion);
     assert.match(source, /link\.href = build\.url;/);
     assert.equal(source.match(/\.href = /g).length, 1);
   });
