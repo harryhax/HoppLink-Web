@@ -5,12 +5,15 @@ of the HoppLink desktop app beside its text.
 
 **Location:** `public/images/hopplink-app.png`, served at `/images/hopplink-app.png`.
 
-**Status: pending.** The screenshot hasn't been supplied yet, and none has been made up in its place. Until the file
-is there, the page hides the screenshot's column and the introduction's text uses the full width. It shows the image
-only once it has really loaded as an image, so a missing file never shows as a broken image: Nginx answers it with the
-site's HTML page instead.
+**Current file:** the desktop app (v0.1.5, dark theme), connected to Sweden. 1736 × 1322 pixels, about 265 KB. It
+was saved losslessly as RGB (its alpha channel was fully opaque) with only its colour profile kept; EXIF and XMP
+metadata were removed.
 
-## Adding it
+The page shows the image only once it has really loaded as an image. If the file were missing, its column would stay
+hidden and the introduction's text would use the full width, rather than showing a broken image (Nginx answers a
+missing file with the site's HTML page).
+
+## Replacing it
 
 1. Use a screenshot of the real desktop app window (not of this website or its downloads page), with no personal
    details: no real email address, username, API key or PAC URL.

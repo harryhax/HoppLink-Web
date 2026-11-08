@@ -43,7 +43,7 @@ export function renderDownloads({ fetch } = {}) {
             </div>
             <div class="col-12 col-lg-6" data-app-screenshot hidden>
               <figure class="mb-0">
-                <img class="pm-app-screenshot" src="/images/hopplink-app.png" alt="The HoppLink desktop app on a computer: choosing a server, the Connect button and the connection status, with the account and proxy credentials alongside" decoding="async">
+                <img class="pm-app-screenshot" src="/images/hopplink-app.png" alt="The HoppLink desktop app connected to its Sweden server, showing Polymarket as not blocked, the data usage, the signed-in account and the proxy credentials" width="1736" height="1322" decoding="async">
               </figure>
             </div>
           </div>

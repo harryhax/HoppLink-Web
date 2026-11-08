@@ -1,7 +1,6 @@
 // The product introduction at the top of the downloads page: its wording, where it sits, the two-column layout that
 // stacks on phones, and the desktop app's screenshot (public/images/hopplink-app.png), which is shown at its own
-// proportions only once it has really loaded. The screenshot file is checked once it has been added; until then, those
-// checks are skipped and the page hides its column. Run with: npm test
+// proportions only once it has really loaded. Run with: npm test
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -138,15 +137,14 @@ describe('the screenshot', () => {
     assert.equal(broken.column.hidden, true);
   });
 
-  test('has its location documented while it is pending', () => {
+  test('has its location documented', () => {
     const doc = read('docs/app-screenshot.md');
     assert.match(doc, /public\/images\/hopplink-app\.png/);
     assert.match(doc, /width.*height/);
   });
 
-  const added = existsSync(join(ROOT, SCREENSHOT));
-
-  test('once added, is a real PNG, optimised for the web, with matching width and height', { skip: !added && `${SCREENSHOT} hasn't been added yet` }, () => {
+  test('is a real PNG, optimised for the web, with matching width and height', () => {
+    assert.ok(existsSync(join(ROOT, SCREENSHOT)), `${SCREENSHOT} is in the repository`);
     const data = readFileSync(join(ROOT, SCREENSHOT));
     assert.deepEqual([...data.subarray(0, 8)], [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], 'a PNG file');
     const width = data.readUInt32BE(16);
@@ -158,5 +156,6 @@ describe('the screenshot', () => {
     const tagHeight = Number(attribute(image, 'height'));
     assert.ok(tagWidth > 0 && tagHeight > 0, 'width and height on the tag reserve its space');
     assert.ok(Math.abs(tagWidth / tagHeight - width / height) / (width / height) < 0.02, 'the same proportions as the file');
+    assert.deepEqual([tagWidth, tagHeight], [width, height], 'the file\'s own size on the tag');
   });
 });
