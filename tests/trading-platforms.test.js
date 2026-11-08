@@ -13,7 +13,7 @@ const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const bytes = (path) => readFileSync(join(ROOT, path));
 
-const PLATFORMS = ['Polymarket', 'Binance', 'BingX', 'Bybit', 'HTX', 'Kalshi', 'OKX', 'Pionex'];
+const PLATFORMS = ['Polymarket', 'Kalshi', 'BingX', 'Bybit', 'HTX', 'Binance', 'OKX', 'Pionex'];
 const DISCLAIMER = 'HoppLink is an independent service and is not affiliated with or endorsed by the platforms shown.';
 
 const page = read('src/pages/downloads.js');
@@ -100,7 +100,7 @@ describe('the logos', () => {
     const styles = read('src/styles.css');
     const [, rule] = styles.match(/\.pm-platform-logo \{([^}]*)\}/) ?? [];
     assert.ok(rule, 'the .pm-platform-logo rule');
-    assert.match(rule, /height: 1\.75rem;/);
+    assert.match(rule, /height: 1\.225rem;/);
     assert.match(rule, /width: auto;/);
     assert.match(rule, /max-width: 100%;/);
     assert.match(rule, /object-fit: contain;/);

@@ -330,7 +330,7 @@ describe('the page', () => {
   test('nothing switched with hidden carries a display utility, so hidden always hides it', () => {
     const toggled = [...source.matchAll(/querySelector\('\[(data-[a-z-]+)\]'\)\.hidden =|(\w+)\.hidden = /g)];
     assert.ok(toggled.length > 0);
-    for (const tag of source.match(/<[a-z]+[^>]*\b(?:data-loading|data-error|data-empty|data-ready|data-notes-section|data-date-row|data-size-row|data-checksum-row)\b[^>]*>/g)) {
+    for (const tag of source.match(/<[a-z]+[^>]*\b(?:data-loading|data-error|data-empty|data-ready|data-notes-section|data-date-row|data-size-row|data-checksum-row|data-app-screenshot)\b[^>]*>/g)) {
       assert.doesNotMatch(tag, /\bd-(?:flex|block|inline|inline-block|grid|table)\b/, tag);
     }
   });

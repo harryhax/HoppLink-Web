@@ -3,7 +3,11 @@
 ## [Unreleased]
 
 ### Added
-- **Supported Trading Platforms** on the downloads page: the logos of Polymarket, Binance, BingX, Bybit, HTX, Kalshi,
+- **Product introduction** at the top of the downloads page, above Supported Trading Platforms: what HoppLink does
+  (selective proxy routing rather than a full VPN), how connecting and disconnecting work, and four features. On wide
+  screens the text sits beside a screenshot of the desktop app; on phones they stack. The screenshot goes in
+  `public/images/hopplink-app.png` (see `docs/app-screenshot.md`); until it's added, its column stays hidden.
+- **Supported Trading Platforms** on the downloads page: the logos of Polymarket, Kalshi, BingX, Bybit, HTX, Binance,
   OKX and Pionex, in their own colours and proportions, two to a row on phones and four on wider screens. A note says
   each platform's own terms and regional restrictions still apply, and that HoppLink is independent and not affiliated
   with or endorsed by them. The logos are stored in `public/brands/`; their sources are in

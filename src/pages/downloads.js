@@ -27,16 +27,38 @@ export function renderDownloads({ fetch } = {}) {
       </header>
 
       <main class="container pm-downloads-container py-5">
+        <section class="pm-intro mb-5" aria-labelledby="pm-intro-title" data-intro>
+          <div class="row g-4 g-lg-5 align-items-center">
+            <div class="col-12 col-lg">
+              <h2 class="h3 fw-semibold mb-3" id="pm-intro-title">Access the platforms you use. Without a full VPN.</h2>
+              <p class="text-body-secondary">HoppLink is a lightweight desktop application that helps you access supported trading and prediction market websites using selective proxy routing.</p>
+              <p class="text-body-secondary">Unlike a traditional VPN that routes all your internet traffic through another server, HoppLink only routes traffic for supported websites. Everything else continues using your normal internet connection.</p>
+              <p class="text-body-secondary mb-4">Simply choose a server and click Connect. HoppLink configures your system automatically, and when you disconnect, your previous network settings are restored.</p>
+              <ul class="list-unstyled pm-intro-features mb-0">
+                <li><i class="bi bi-signpost-split text-primary" aria-hidden="true"></i><span><strong>Selective Routing:</strong> Only supported websites use the HoppLink proxy. Other traffic stays on your normal connection.</span></li>
+                <li><i class="bi bi-lightning-charge text-primary" aria-hidden="true"></i><span><strong>One-Click Connection:</strong> Select a server and connect without manually configuring proxy settings.</span></li>
+                <li><i class="bi bi-laptop text-primary" aria-hidden="true"></i><span><strong>Lightweight Desktop App:</strong> Available for Windows and macOS.</span></li>
+                <li><i class="bi bi-arrow-counterclockwise text-primary" aria-hidden="true"></i><span><strong>Easy Disconnect:</strong> Restore your previous system proxy configuration when finished.</span></li>
+              </ul>
+            </div>
+            <div class="col-12 col-lg-6" data-app-screenshot hidden>
+              <figure class="mb-0">
+                <img class="pm-app-screenshot" src="/images/hopplink-app.png" alt="The HoppLink desktop app on a computer: choosing a server, the Connect button and the connection status, with the account and proxy credentials alongside" decoding="async">
+              </figure>
+            </div>
+          </div>
+        </section>
+
         <section class="pm-platforms mb-5" aria-labelledby="pm-platforms-title" data-platforms>
           <h2 class="h5 fw-semibold text-center mb-2" id="pm-platforms-title">Supported Trading Platforms</h2>
           <p class="text-center text-body-secondary small mb-4">HoppLink can be used with these platforms. Each platform's own terms and regional restrictions still apply, so not every platform is available everywhere.</p>
           <ul class="row row-cols-2 row-cols-md-4 g-3 list-unstyled mb-0">
             <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/polymarket.svg" alt="Polymarket" width="911" height="168" loading="lazy" decoding="async"></div></li>
-            <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/binance.svg" alt="Binance" width="632" height="127" loading="lazy" decoding="async"></div></li>
+            <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/kalshi.svg" alt="Kalshi" width="772" height="226" loading="lazy" decoding="async"></div></li>
             <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/bingx.svg" alt="BingX" width="76" height="24" loading="lazy" decoding="async"></div></li>
             <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/bybit.svg" alt="Bybit" width="300" height="100" loading="lazy" decoding="async"></div></li>
             <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/htx.png" alt="HTX" width="374" height="144" loading="lazy" decoding="async"></div></li>
-            <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/kalshi.svg" alt="Kalshi" width="772" height="226" loading="lazy" decoding="async"></div></li>
+            <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/binance.svg" alt="Binance" width="632" height="127" loading="lazy" decoding="async"></div></li>
             <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/okx.svg" alt="OKX" width="157" height="44" loading="lazy" decoding="async"></div></li>
             <li class="col"><div class="pm-platform"><img class="pm-platform-logo" src="/brands/pionex.png" alt="Pionex" width="378" height="66" loading="lazy" decoding="async"></div></li>
           </ul>
@@ -100,6 +122,8 @@ export function renderDownloads({ fetch } = {}) {
       </main>
     </div>`);
 
+  showScreenshotOnceLoaded(page.querySelector('[data-app-screenshot]'));
+
   const loading = page.querySelector('[data-loading]');
   const errorBox = page.querySelector('[data-error]');
   const empty = page.querySelector('[data-empty]');
@@ -140,6 +164,20 @@ export function renderDownloads({ fetch } = {}) {
   page.querySelector('[data-retry]').addEventListener('click', load);
   load();
   return page;
+}
+
+/**
+ * The desktop app's screenshot (public/images/hopplink-app.png, see docs/app-screenshot.md) is shown only once it has
+ * really loaded as an image. Until the file is added, or if it fails to load (a 404, or the site's HTML page served in
+ * its place), its column stays hidden and the introduction's text takes the full width, so no broken image appears.
+ */
+export function showScreenshotOnceLoaded(column) {
+  const image = column.querySelector('img');
+  const reveal = () => {
+    if (image.naturalWidth > 0) column.hidden = false;
+  };
+  image.addEventListener('load', reveal);
+  if (image.complete) reveal();
 }
 
 /** One platform's card. Text only from the validated build; the link is its downloadUrl(). */

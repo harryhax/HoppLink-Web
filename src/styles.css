@@ -136,6 +136,20 @@ body {
 .pm-downloads-container { max-width: 960px; }
 .pm-downloads-empty-icon { font-size: 2.5rem; }
 
+/* Product introduction: the feature list with its icons, and the desktop app's screenshot at its own proportions. */
+.pm-intro-features { display: grid; gap: 0.75rem; }
+.pm-intro-features li { display: flex; gap: 0.75rem; align-items: flex-start; }
+.pm-intro-features .bi { font-size: 1.15rem; line-height: 1.5rem; flex-shrink: 0; }
+.pm-app-screenshot {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.85rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.12);
+}
+
 /* Supported trading platforms: each logo in its own colours and proportions, the same height, on a white tile. */
 .pm-platform {
   display: flex;
@@ -148,7 +162,7 @@ body {
   border-radius: 0.85rem;
 }
 .pm-platform-logo {
-  height: 1.75rem;
+  height: 1.225rem;
   width: auto;
   max-width: 100%;
   object-fit: contain;
