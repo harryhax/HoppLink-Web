@@ -25,10 +25,8 @@ describe('the introduction', () => {
     assert.match(section, /aria-labelledby="pm-intro-title"/);
     assert.match(section, /<h2 class="[^"]*" id="pm-intro-title">Access the platforms you use\. Without a full VPN\.<\/h2>/);
     for (const paragraph of [
-      'HoppLink is a lightweight desktop application that helps you access supported trading and prediction market websites using selective proxy routing.',
-      'Unlike a traditional VPN that routes all your internet traffic through another server, HoppLink only routes traffic for supported websites. Everything else continues using your normal internet connection.',
-      'Simply choose a server and click Connect. HoppLink configures your system automatically, and when you disconnect, your previous network settings are restored.',
-    ]) assert.ok(section.includes(`>${paragraph}</p>`), paragraph);
+      'HoppLink is a lightweight desktop application that helps you access supported trading and prediction market websites using selective proxy routing.'
+     ]) assert.ok(section.includes(`>${paragraph}</p>`), paragraph);
   });
 
   test('lists the four features, each with its heading', () => {

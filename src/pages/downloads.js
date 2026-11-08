@@ -32,8 +32,6 @@ export function renderDownloads({ fetch } = {}) {
             <div class="col-12 col-lg">
               <h2 class="h3 fw-semibold mb-3" id="pm-intro-title">Access the platforms you use. Without a full VPN.</h2>
               <p class="text-body-secondary">HoppLink is a lightweight desktop application that helps you access supported trading and prediction market websites using selective proxy routing.</p>
-              <p class="text-body-secondary">Unlike a traditional VPN that routes all your internet traffic through another server, HoppLink only routes traffic for supported websites. Everything else continues using your normal internet connection.</p>
-              <p class="text-body-secondary mb-4">Simply choose a server and click Connect. HoppLink configures your system automatically, and when you disconnect, your previous network settings are restored.</p>
               <ul class="list-unstyled pm-intro-features mb-0">
                 <li><i class="bi bi-signpost-split text-primary" aria-hidden="true"></i><span><strong>Selective Routing:</strong> Only supported websites use the HoppLink proxy. Other traffic stays on your normal connection.</span></li>
                 <li><i class="bi bi-lightning-charge text-primary" aria-hidden="true"></i><span><strong>One-Click Connection:</strong> Select a server and connect without manually configuring proxy settings.</span></li>
